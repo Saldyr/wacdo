@@ -1,0 +1,1792 @@
+Array
+(
+    [items] => Array
+        (
+            [0] => Array
+                (
+                    [type] => menus
+                    [id] => 3
+                    [name] => L'audacieux Comfort
+                    [qty] => 7
+                    [price] => 12.50
+                    [subtotal] => 87.5
+                )
+
+            [1] => Array
+                (
+                    [type] => menus
+                    [id] => 2
+                    [name] => L'intello Gourmand
+                    [qty] => 13
+                    [price] => 12.70
+                    [subtotal] => 165.1
+                )
+
+            [2] => Array
+                (
+                    [type] => menus
+                    [id] => 4
+                    [name] => L’Executive Express
+                    [qty] => 2
+                    [price] => 12.60
+                    [subtotal] => 25.2
+                )
+
+            [3] => Array
+                (
+                    [type] => produits
+                    [id] => 7
+                    [name] => Le Hot Collègue
+                    [qty] => 1
+                    [price] => 5.80
+                    [subtotal] => 5.8
+                )
+
+            [4] => Array
+                (
+                    [type] => produits
+                    [id] => 8
+                    [name] => Le Dog’ument Officiel
+                    [qty] => 2
+                    [price] => 6.50
+                    [subtotal] => 13
+                )
+
+            [5] => Array
+                (
+                    [type] => produits
+                    [id] => 17
+                    [name] => Les Nuggets de la Réu
+                    [qty] => 1
+                    [price] => 3.50
+                    [subtotal] => 3.5
+                )
+
+            [6] => Array
+                (
+                    [type] => produits
+                    [id] => 18
+                    [name] => Le Nuage Choco-Vanille
+                    [qty] => 1
+                    [price] => 3.00
+                    [subtotal] => 3
+                )
+
+            [7] => Array
+                (
+                    [type] => produits
+                    [id] => 4
+                    [name] => Le RH (Raclette & Hamburger)
+                    [qty] => 1
+                    [price] => 8.50
+                    [subtotal] => 8.5
+                )
+
+            [8] => Array
+                (
+                    [type] => produits
+                    [id] => 1
+                    [name] => Le Big Brain Burger
+                    [qty] => 1
+                    [price] => 8.50
+                    [subtotal] => 8.5
+                )
+
+            [9] => Array
+                (
+                    [type] => boissons
+                    [id] => 10
+                    [name] => Le Codeur
+                    [qty] => 1
+                    [price] => 3.50
+                    [subtotal] => 3.5
+                )
+
+            [10] => Array
+                (
+                    [type] => boissons
+                    [id] => 4
+                    [name] => La Frapp’Attitude
+                    [qty] => 1
+                    [price] => 2.50
+                    [subtotal] => 2.5
+                )
+
+            [11] => Array
+                (
+                    [type] => boissons
+                    [id] => 3
+                    [name] => La Zénitude
+                    [qty] => 1
+                    [price] => 2.50
+                    [subtotal] => 2.5
+                )
+
+        )
+
+    [total] => 328.6
+)
+Array
+(
+    [items] => Array
+        (
+            [0] => Array
+                (
+                    [type] => menus
+                    [id] => 3
+                    [name] => L'audacieux Comfort
+                    [qty] => 8
+                    [price] => 12.50
+                    [subtotal] => 100
+                )
+
+            [1] => Array
+                (
+                    [type] => menus
+                    [id] => 2
+                    [name] => L'intello Gourmand
+                    [qty] => 13
+                    [price] => 12.70
+                    [subtotal] => 165.1
+                )
+
+            [2] => Array
+                (
+                    [type] => menus
+                    [id] => 4
+                    [name] => L’Executive Express
+                    [qty] => 2
+                    [price] => 12.60
+                    [subtotal] => 25.2
+                )
+
+            [3] => Array
+                (
+                    [type] => produits
+                    [id] => 7
+                    [name] => Le Hot Collègue
+                    [qty] => 1
+                    [price] => 5.80
+                    [subtotal] => 5.8
+                )
+
+            [4] => Array
+                (
+                    [type] => produits
+                    [id] => 8
+                    [name] => Le Dog’ument Officiel
+                    [qty] => 2
+                    [price] => 6.50
+                    [subtotal] => 13
+                )
+
+            [5] => Array
+                (
+                    [type] => produits
+                    [id] => 17
+                    [name] => Les Nuggets de la Réu
+                    [qty] => 1
+                    [price] => 3.50
+                    [subtotal] => 3.5
+                )
+
+            [6] => Array
+                (
+                    [type] => produits
+                    [id] => 18
+                    [name] => Le Nuage Choco-Vanille
+                    [qty] => 1
+                    [price] => 3.00
+                    [subtotal] => 3
+                )
+
+            [7] => Array
+                (
+                    [type] => produits
+                    [id] => 4
+                    [name] => Le RH (Raclette & Hamburger)
+                    [qty] => 1
+                    [price] => 8.50
+                    [subtotal] => 8.5
+                )
+
+            [8] => Array
+                (
+                    [type] => produits
+                    [id] => 1
+                    [name] => Le Big Brain Burger
+                    [qty] => 1
+                    [price] => 8.50
+                    [subtotal] => 8.5
+                )
+
+            [9] => Array
+                (
+                    [type] => boissons
+                    [id] => 10
+                    [name] => Le Codeur
+                    [qty] => 1
+                    [price] => 3.50
+                    [subtotal] => 3.5
+                )
+
+            [10] => Array
+                (
+                    [type] => boissons
+                    [id] => 4
+                    [name] => La Frapp’Attitude
+                    [qty] => 1
+                    [price] => 2.50
+                    [subtotal] => 2.5
+                )
+
+            [11] => Array
+                (
+                    [type] => boissons
+                    [id] => 3
+                    [name] => La Zénitude
+                    [qty] => 1
+                    [price] => 2.50
+                    [subtotal] => 2.5
+                )
+
+        )
+
+    [total] => 341.1
+)
+Array
+(
+    [items] => Array
+        (
+            [0] => Array
+                (
+                    [type] => menus
+                    [id] => 3
+                    [name] => L'audacieux Comfort
+                    [qty] => 8
+                    [price] => 12.50
+                    [subtotal] => 100
+                )
+
+            [1] => Array
+                (
+                    [type] => menus
+                    [id] => 2
+                    [name] => L'intello Gourmand
+                    [qty] => 14
+                    [price] => 12.70
+                    [subtotal] => 177.8
+                )
+
+            [2] => Array
+                (
+                    [type] => menus
+                    [id] => 4
+                    [name] => L’Executive Express
+                    [qty] => 2
+                    [price] => 12.60
+                    [subtotal] => 25.2
+                )
+
+            [3] => Array
+                (
+                    [type] => produits
+                    [id] => 7
+                    [name] => Le Hot Collègue
+                    [qty] => 1
+                    [price] => 5.80
+                    [subtotal] => 5.8
+                )
+
+            [4] => Array
+                (
+                    [type] => produits
+                    [id] => 8
+                    [name] => Le Dog’ument Officiel
+                    [qty] => 2
+                    [price] => 6.50
+                    [subtotal] => 13
+                )
+
+            [5] => Array
+                (
+                    [type] => produits
+                    [id] => 17
+                    [name] => Les Nuggets de la Réu
+                    [qty] => 1
+                    [price] => 3.50
+                    [subtotal] => 3.5
+                )
+
+            [6] => Array
+                (
+                    [type] => produits
+                    [id] => 18
+                    [name] => Le Nuage Choco-Vanille
+                    [qty] => 1
+                    [price] => 3.00
+                    [subtotal] => 3
+                )
+
+            [7] => Array
+                (
+                    [type] => produits
+                    [id] => 4
+                    [name] => Le RH (Raclette & Hamburger)
+                    [qty] => 1
+                    [price] => 8.50
+                    [subtotal] => 8.5
+                )
+
+            [8] => Array
+                (
+                    [type] => produits
+                    [id] => 1
+                    [name] => Le Big Brain Burger
+                    [qty] => 1
+                    [price] => 8.50
+                    [subtotal] => 8.5
+                )
+
+            [9] => Array
+                (
+                    [type] => boissons
+                    [id] => 10
+                    [name] => Le Codeur
+                    [qty] => 1
+                    [price] => 3.50
+                    [subtotal] => 3.5
+                )
+
+            [10] => Array
+                (
+                    [type] => boissons
+                    [id] => 4
+                    [name] => La Frapp’Attitude
+                    [qty] => 1
+                    [price] => 2.50
+                    [subtotal] => 2.5
+                )
+
+            [11] => Array
+                (
+                    [type] => boissons
+                    [id] => 3
+                    [name] => La Zénitude
+                    [qty] => 1
+                    [price] => 2.50
+                    [subtotal] => 2.5
+                )
+
+        )
+
+    [total] => 353.8
+)
+Array
+(
+    [items] => Array
+        (
+            [0] => Array
+                (
+                    [type] => menus
+                    [id] => 3
+                    [name] => L'audacieux Comfort
+                    [qty] => 8
+                    [price] => 12.50
+                    [subtotal] => 100
+                )
+
+            [1] => Array
+                (
+                    [type] => menus
+                    [id] => 2
+                    [name] => L'intello Gourmand
+                    [qty] => 15
+                    [price] => 12.70
+                    [subtotal] => 190.5
+                )
+
+            [2] => Array
+                (
+                    [type] => menus
+                    [id] => 4
+                    [name] => L’Executive Express
+                    [qty] => 2
+                    [price] => 12.60
+                    [subtotal] => 25.2
+                )
+
+            [3] => Array
+                (
+                    [type] => produits
+                    [id] => 7
+                    [name] => Le Hot Collègue
+                    [qty] => 1
+                    [price] => 5.80
+                    [subtotal] => 5.8
+                )
+
+            [4] => Array
+                (
+                    [type] => produits
+                    [id] => 8
+                    [name] => Le Dog’ument Officiel
+                    [qty] => 2
+                    [price] => 6.50
+                    [subtotal] => 13
+                )
+
+            [5] => Array
+                (
+                    [type] => produits
+                    [id] => 17
+                    [name] => Les Nuggets de la Réu
+                    [qty] => 1
+                    [price] => 3.50
+                    [subtotal] => 3.5
+                )
+
+            [6] => Array
+                (
+                    [type] => produits
+                    [id] => 18
+                    [name] => Le Nuage Choco-Vanille
+                    [qty] => 1
+                    [price] => 3.00
+                    [subtotal] => 3
+                )
+
+            [7] => Array
+                (
+                    [type] => produits
+                    [id] => 4
+                    [name] => Le RH (Raclette & Hamburger)
+                    [qty] => 1
+                    [price] => 8.50
+                    [subtotal] => 8.5
+                )
+
+            [8] => Array
+                (
+                    [type] => produits
+                    [id] => 1
+                    [name] => Le Big Brain Burger
+                    [qty] => 1
+                    [price] => 8.50
+                    [subtotal] => 8.5
+                )
+
+            [9] => Array
+                (
+                    [type] => boissons
+                    [id] => 10
+                    [name] => Le Codeur
+                    [qty] => 1
+                    [price] => 3.50
+                    [subtotal] => 3.5
+                )
+
+            [10] => Array
+                (
+                    [type] => boissons
+                    [id] => 4
+                    [name] => La Frapp’Attitude
+                    [qty] => 1
+                    [price] => 2.50
+                    [subtotal] => 2.5
+                )
+
+            [11] => Array
+                (
+                    [type] => boissons
+                    [id] => 3
+                    [name] => La Zénitude
+                    [qty] => 1
+                    [price] => 2.50
+                    [subtotal] => 2.5
+                )
+
+        )
+
+    [total] => 366.5
+)
+Array
+(
+    [items] => Array
+        (
+            [0] => Array
+                (
+                    [type] => menus
+                    [id] => 3
+                    [name] => L'audacieux Comfort
+                    [qty] => 9
+                    [price] => 12.50
+                    [subtotal] => 112.5
+                )
+
+            [1] => Array
+                (
+                    [type] => menus
+                    [id] => 2
+                    [name] => L'intello Gourmand
+                    [qty] => 15
+                    [price] => 12.70
+                    [subtotal] => 190.5
+                )
+
+            [2] => Array
+                (
+                    [type] => menus
+                    [id] => 4
+                    [name] => L’Executive Express
+                    [qty] => 2
+                    [price] => 12.60
+                    [subtotal] => 25.2
+                )
+
+            [3] => Array
+                (
+                    [type] => produits
+                    [id] => 7
+                    [name] => Le Hot Collègue
+                    [qty] => 1
+                    [price] => 5.80
+                    [subtotal] => 5.8
+                )
+
+            [4] => Array
+                (
+                    [type] => produits
+                    [id] => 8
+                    [name] => Le Dog’ument Officiel
+                    [qty] => 2
+                    [price] => 6.50
+                    [subtotal] => 13
+                )
+
+            [5] => Array
+                (
+                    [type] => produits
+                    [id] => 17
+                    [name] => Les Nuggets de la Réu
+                    [qty] => 1
+                    [price] => 3.50
+                    [subtotal] => 3.5
+                )
+
+            [6] => Array
+                (
+                    [type] => produits
+                    [id] => 18
+                    [name] => Le Nuage Choco-Vanille
+                    [qty] => 1
+                    [price] => 3.00
+                    [subtotal] => 3
+                )
+
+            [7] => Array
+                (
+                    [type] => produits
+                    [id] => 4
+                    [name] => Le RH (Raclette & Hamburger)
+                    [qty] => 1
+                    [price] => 8.50
+                    [subtotal] => 8.5
+                )
+
+            [8] => Array
+                (
+                    [type] => produits
+                    [id] => 1
+                    [name] => Le Big Brain Burger
+                    [qty] => 1
+                    [price] => 8.50
+                    [subtotal] => 8.5
+                )
+
+            [9] => Array
+                (
+                    [type] => boissons
+                    [id] => 10
+                    [name] => Le Codeur
+                    [qty] => 1
+                    [price] => 3.50
+                    [subtotal] => 3.5
+                )
+
+            [10] => Array
+                (
+                    [type] => boissons
+                    [id] => 4
+                    [name] => La Frapp’Attitude
+                    [qty] => 1
+                    [price] => 2.50
+                    [subtotal] => 2.5
+                )
+
+            [11] => Array
+                (
+                    [type] => boissons
+                    [id] => 3
+                    [name] => La Zénitude
+                    [qty] => 1
+                    [price] => 2.50
+                    [subtotal] => 2.5
+                )
+
+        )
+
+    [total] => 379
+)
+Array
+(
+    [items] => Array
+        (
+            [0] => Array
+                (
+                    [type] => menus
+                    [id] => 3
+                    [name] => L'audacieux Comfort
+                    [qty] => 10
+                    [price] => 12.50
+                    [subtotal] => 125
+                )
+
+            [1] => Array
+                (
+                    [type] => menus
+                    [id] => 2
+                    [name] => L'intello Gourmand
+                    [qty] => 15
+                    [price] => 12.70
+                    [subtotal] => 190.5
+                )
+
+            [2] => Array
+                (
+                    [type] => menus
+                    [id] => 4
+                    [name] => L’Executive Express
+                    [qty] => 2
+                    [price] => 12.60
+                    [subtotal] => 25.2
+                )
+
+            [3] => Array
+                (
+                    [type] => produits
+                    [id] => 7
+                    [name] => Le Hot Collègue
+                    [qty] => 1
+                    [price] => 5.80
+                    [subtotal] => 5.8
+                )
+
+            [4] => Array
+                (
+                    [type] => produits
+                    [id] => 8
+                    [name] => Le Dog’ument Officiel
+                    [qty] => 2
+                    [price] => 6.50
+                    [subtotal] => 13
+                )
+
+            [5] => Array
+                (
+                    [type] => produits
+                    [id] => 17
+                    [name] => Les Nuggets de la Réu
+                    [qty] => 1
+                    [price] => 3.50
+                    [subtotal] => 3.5
+                )
+
+            [6] => Array
+                (
+                    [type] => produits
+                    [id] => 18
+                    [name] => Le Nuage Choco-Vanille
+                    [qty] => 1
+                    [price] => 3.00
+                    [subtotal] => 3
+                )
+
+            [7] => Array
+                (
+                    [type] => produits
+                    [id] => 4
+                    [name] => Le RH (Raclette & Hamburger)
+                    [qty] => 1
+                    [price] => 8.50
+                    [subtotal] => 8.5
+                )
+
+            [8] => Array
+                (
+                    [type] => produits
+                    [id] => 1
+                    [name] => Le Big Brain Burger
+                    [qty] => 1
+                    [price] => 8.50
+                    [subtotal] => 8.5
+                )
+
+            [9] => Array
+                (
+                    [type] => boissons
+                    [id] => 10
+                    [name] => Le Codeur
+                    [qty] => 1
+                    [price] => 3.50
+                    [subtotal] => 3.5
+                )
+
+            [10] => Array
+                (
+                    [type] => boissons
+                    [id] => 4
+                    [name] => La Frapp’Attitude
+                    [qty] => 1
+                    [price] => 2.50
+                    [subtotal] => 2.5
+                )
+
+            [11] => Array
+                (
+                    [type] => boissons
+                    [id] => 3
+                    [name] => La Zénitude
+                    [qty] => 1
+                    [price] => 2.50
+                    [subtotal] => 2.5
+                )
+
+        )
+
+    [total] => 391.5
+)
+Array
+(
+    [items] => Array
+        (
+            [0] => Array
+                (
+                    [type] => menus
+                    [id] => 3
+                    [name] => L'audacieux Comfort
+                    [qty] => 11
+                    [price] => 12.50
+                    [subtotal] => 137.5
+                )
+
+            [1] => Array
+                (
+                    [type] => menus
+                    [id] => 2
+                    [name] => L'intello Gourmand
+                    [qty] => 15
+                    [price] => 12.70
+                    [subtotal] => 190.5
+                )
+
+            [2] => Array
+                (
+                    [type] => menus
+                    [id] => 4
+                    [name] => L’Executive Express
+                    [qty] => 2
+                    [price] => 12.60
+                    [subtotal] => 25.2
+                )
+
+            [3] => Array
+                (
+                    [type] => produits
+                    [id] => 7
+                    [name] => Le Hot Collègue
+                    [qty] => 1
+                    [price] => 5.80
+                    [subtotal] => 5.8
+                )
+
+            [4] => Array
+                (
+                    [type] => produits
+                    [id] => 8
+                    [name] => Le Dog’ument Officiel
+                    [qty] => 2
+                    [price] => 6.50
+                    [subtotal] => 13
+                )
+
+            [5] => Array
+                (
+                    [type] => produits
+                    [id] => 17
+                    [name] => Les Nuggets de la Réu
+                    [qty] => 1
+                    [price] => 3.50
+                    [subtotal] => 3.5
+                )
+
+            [6] => Array
+                (
+                    [type] => produits
+                    [id] => 18
+                    [name] => Le Nuage Choco-Vanille
+                    [qty] => 1
+                    [price] => 3.00
+                    [subtotal] => 3
+                )
+
+            [7] => Array
+                (
+                    [type] => produits
+                    [id] => 4
+                    [name] => Le RH (Raclette & Hamburger)
+                    [qty] => 1
+                    [price] => 8.50
+                    [subtotal] => 8.5
+                )
+
+            [8] => Array
+                (
+                    [type] => produits
+                    [id] => 1
+                    [name] => Le Big Brain Burger
+                    [qty] => 1
+                    [price] => 8.50
+                    [subtotal] => 8.5
+                )
+
+            [9] => Array
+                (
+                    [type] => boissons
+                    [id] => 10
+                    [name] => Le Codeur
+                    [qty] => 1
+                    [price] => 3.50
+                    [subtotal] => 3.5
+                )
+
+            [10] => Array
+                (
+                    [type] => boissons
+                    [id] => 4
+                    [name] => La Frapp’Attitude
+                    [qty] => 1
+                    [price] => 2.50
+                    [subtotal] => 2.5
+                )
+
+            [11] => Array
+                (
+                    [type] => boissons
+                    [id] => 3
+                    [name] => La Zénitude
+                    [qty] => 1
+                    [price] => 2.50
+                    [subtotal] => 2.5
+                )
+
+        )
+
+    [total] => 404
+)
+Array
+(
+    [items] => Array
+        (
+            [0] => Array
+                (
+                    [type] => menus
+                    [id] => 3
+                    [name] => L'audacieux Comfort
+                    [qty] => 12
+                    [price] => 12.50
+                    [subtotal] => 150
+                )
+
+            [1] => Array
+                (
+                    [type] => menus
+                    [id] => 2
+                    [name] => L'intello Gourmand
+                    [qty] => 15
+                    [price] => 12.70
+                    [subtotal] => 190.5
+                )
+
+            [2] => Array
+                (
+                    [type] => menus
+                    [id] => 4
+                    [name] => L’Executive Express
+                    [qty] => 2
+                    [price] => 12.60
+                    [subtotal] => 25.2
+                )
+
+            [3] => Array
+                (
+                    [type] => produits
+                    [id] => 7
+                    [name] => Le Hot Collègue
+                    [qty] => 1
+                    [price] => 5.80
+                    [subtotal] => 5.8
+                )
+
+            [4] => Array
+                (
+                    [type] => produits
+                    [id] => 8
+                    [name] => Le Dog’ument Officiel
+                    [qty] => 2
+                    [price] => 6.50
+                    [subtotal] => 13
+                )
+
+            [5] => Array
+                (
+                    [type] => produits
+                    [id] => 17
+                    [name] => Les Nuggets de la Réu
+                    [qty] => 1
+                    [price] => 3.50
+                    [subtotal] => 3.5
+                )
+
+            [6] => Array
+                (
+                    [type] => produits
+                    [id] => 18
+                    [name] => Le Nuage Choco-Vanille
+                    [qty] => 1
+                    [price] => 3.00
+                    [subtotal] => 3
+                )
+
+            [7] => Array
+                (
+                    [type] => produits
+                    [id] => 4
+                    [name] => Le RH (Raclette & Hamburger)
+                    [qty] => 1
+                    [price] => 8.50
+                    [subtotal] => 8.5
+                )
+
+            [8] => Array
+                (
+                    [type] => produits
+                    [id] => 1
+                    [name] => Le Big Brain Burger
+                    [qty] => 1
+                    [price] => 8.50
+                    [subtotal] => 8.5
+                )
+
+            [9] => Array
+                (
+                    [type] => boissons
+                    [id] => 10
+                    [name] => Le Codeur
+                    [qty] => 1
+                    [price] => 3.50
+                    [subtotal] => 3.5
+                )
+
+            [10] => Array
+                (
+                    [type] => boissons
+                    [id] => 4
+                    [name] => La Frapp’Attitude
+                    [qty] => 1
+                    [price] => 2.50
+                    [subtotal] => 2.5
+                )
+
+            [11] => Array
+                (
+                    [type] => boissons
+                    [id] => 3
+                    [name] => La Zénitude
+                    [qty] => 1
+                    [price] => 2.50
+                    [subtotal] => 2.5
+                )
+
+        )
+
+    [total] => 416.5
+)
+Array
+(
+    [items] => Array
+        (
+            [0] => Array
+                (
+                    [type] => menus
+                    [id] => 3
+                    [name] => L'audacieux Comfort
+                    [qty] => 13
+                    [price] => 12.50
+                    [subtotal] => 162.5
+                )
+
+            [1] => Array
+                (
+                    [type] => menus
+                    [id] => 2
+                    [name] => L'intello Gourmand
+                    [qty] => 15
+                    [price] => 12.70
+                    [subtotal] => 190.5
+                )
+
+            [2] => Array
+                (
+                    [type] => menus
+                    [id] => 4
+                    [name] => L’Executive Express
+                    [qty] => 2
+                    [price] => 12.60
+                    [subtotal] => 25.2
+                )
+
+            [3] => Array
+                (
+                    [type] => produits
+                    [id] => 7
+                    [name] => Le Hot Collègue
+                    [qty] => 1
+                    [price] => 5.80
+                    [subtotal] => 5.8
+                )
+
+            [4] => Array
+                (
+                    [type] => produits
+                    [id] => 8
+                    [name] => Le Dog’ument Officiel
+                    [qty] => 2
+                    [price] => 6.50
+                    [subtotal] => 13
+                )
+
+            [5] => Array
+                (
+                    [type] => produits
+                    [id] => 17
+                    [name] => Les Nuggets de la Réu
+                    [qty] => 1
+                    [price] => 3.50
+                    [subtotal] => 3.5
+                )
+
+            [6] => Array
+                (
+                    [type] => produits
+                    [id] => 18
+                    [name] => Le Nuage Choco-Vanille
+                    [qty] => 1
+                    [price] => 3.00
+                    [subtotal] => 3
+                )
+
+            [7] => Array
+                (
+                    [type] => produits
+                    [id] => 4
+                    [name] => Le RH (Raclette & Hamburger)
+                    [qty] => 1
+                    [price] => 8.50
+                    [subtotal] => 8.5
+                )
+
+            [8] => Array
+                (
+                    [type] => produits
+                    [id] => 1
+                    [name] => Le Big Brain Burger
+                    [qty] => 1
+                    [price] => 8.50
+                    [subtotal] => 8.5
+                )
+
+            [9] => Array
+                (
+                    [type] => boissons
+                    [id] => 10
+                    [name] => Le Codeur
+                    [qty] => 1
+                    [price] => 3.50
+                    [subtotal] => 3.5
+                )
+
+            [10] => Array
+                (
+                    [type] => boissons
+                    [id] => 4
+                    [name] => La Frapp’Attitude
+                    [qty] => 1
+                    [price] => 2.50
+                    [subtotal] => 2.5
+                )
+
+            [11] => Array
+                (
+                    [type] => boissons
+                    [id] => 3
+                    [name] => La Zénitude
+                    [qty] => 1
+                    [price] => 2.50
+                    [subtotal] => 2.5
+                )
+
+        )
+
+    [total] => 429
+)
+Array
+(
+    [items] => Array
+        (
+            [0] => Array
+                (
+                    [type] => menus
+                    [id] => 3
+                    [name] => L'audacieux Comfort
+                    [qty] => 13
+                    [price] => 12.50
+                    [subtotal] => 162.5
+                )
+
+            [1] => Array
+                (
+                    [type] => menus
+                    [id] => 2
+                    [name] => L'intello Gourmand
+                    [qty] => 16
+                    [price] => 12.70
+                    [subtotal] => 203.2
+                )
+
+            [2] => Array
+                (
+                    [type] => menus
+                    [id] => 4
+                    [name] => L’Executive Express
+                    [qty] => 2
+                    [price] => 12.60
+                    [subtotal] => 25.2
+                )
+
+            [3] => Array
+                (
+                    [type] => produits
+                    [id] => 7
+                    [name] => Le Hot Collègue
+                    [qty] => 1
+                    [price] => 5.80
+                    [subtotal] => 5.8
+                )
+
+            [4] => Array
+                (
+                    [type] => produits
+                    [id] => 8
+                    [name] => Le Dog’ument Officiel
+                    [qty] => 2
+                    [price] => 6.50
+                    [subtotal] => 13
+                )
+
+            [5] => Array
+                (
+                    [type] => produits
+                    [id] => 17
+                    [name] => Les Nuggets de la Réu
+                    [qty] => 1
+                    [price] => 3.50
+                    [subtotal] => 3.5
+                )
+
+            [6] => Array
+                (
+                    [type] => produits
+                    [id] => 18
+                    [name] => Le Nuage Choco-Vanille
+                    [qty] => 1
+                    [price] => 3.00
+                    [subtotal] => 3
+                )
+
+            [7] => Array
+                (
+                    [type] => produits
+                    [id] => 4
+                    [name] => Le RH (Raclette & Hamburger)
+                    [qty] => 1
+                    [price] => 8.50
+                    [subtotal] => 8.5
+                )
+
+            [8] => Array
+                (
+                    [type] => produits
+                    [id] => 1
+                    [name] => Le Big Brain Burger
+                    [qty] => 1
+                    [price] => 8.50
+                    [subtotal] => 8.5
+                )
+
+            [9] => Array
+                (
+                    [type] => boissons
+                    [id] => 10
+                    [name] => Le Codeur
+                    [qty] => 1
+                    [price] => 3.50
+                    [subtotal] => 3.5
+                )
+
+            [10] => Array
+                (
+                    [type] => boissons
+                    [id] => 4
+                    [name] => La Frapp’Attitude
+                    [qty] => 1
+                    [price] => 2.50
+                    [subtotal] => 2.5
+                )
+
+            [11] => Array
+                (
+                    [type] => boissons
+                    [id] => 3
+                    [name] => La Zénitude
+                    [qty] => 1
+                    [price] => 2.50
+                    [subtotal] => 2.5
+                )
+
+        )
+
+    [total] => 441.7
+)
+Array
+(
+    [items] => Array
+        (
+            [0] => Array
+                (
+                    [type] => menus
+                    [id] => 3
+                    [name] => L'audacieux Comfort
+                    [qty] => 14
+                    [price] => 12.50
+                    [subtotal] => 175
+                )
+
+            [1] => Array
+                (
+                    [type] => menus
+                    [id] => 2
+                    [name] => L'intello Gourmand
+                    [qty] => 16
+                    [price] => 12.70
+                    [subtotal] => 203.2
+                )
+
+            [2] => Array
+                (
+                    [type] => menus
+                    [id] => 4
+                    [name] => L’Executive Express
+                    [qty] => 2
+                    [price] => 12.60
+                    [subtotal] => 25.2
+                )
+
+            [3] => Array
+                (
+                    [type] => produits
+                    [id] => 7
+                    [name] => Le Hot Collègue
+                    [qty] => 1
+                    [price] => 5.80
+                    [subtotal] => 5.8
+                )
+
+            [4] => Array
+                (
+                    [type] => produits
+                    [id] => 8
+                    [name] => Le Dog’ument Officiel
+                    [qty] => 2
+                    [price] => 6.50
+                    [subtotal] => 13
+                )
+
+            [5] => Array
+                (
+                    [type] => produits
+                    [id] => 17
+                    [name] => Les Nuggets de la Réu
+                    [qty] => 1
+                    [price] => 3.50
+                    [subtotal] => 3.5
+                )
+
+            [6] => Array
+                (
+                    [type] => produits
+                    [id] => 18
+                    [name] => Le Nuage Choco-Vanille
+                    [qty] => 1
+                    [price] => 3.00
+                    [subtotal] => 3
+                )
+
+            [7] => Array
+                (
+                    [type] => produits
+                    [id] => 4
+                    [name] => Le RH (Raclette & Hamburger)
+                    [qty] => 1
+                    [price] => 8.50
+                    [subtotal] => 8.5
+                )
+
+            [8] => Array
+                (
+                    [type] => produits
+                    [id] => 1
+                    [name] => Le Big Brain Burger
+                    [qty] => 1
+                    [price] => 8.50
+                    [subtotal] => 8.5
+                )
+
+            [9] => Array
+                (
+                    [type] => boissons
+                    [id] => 10
+                    [name] => Le Codeur
+                    [qty] => 1
+                    [price] => 3.50
+                    [subtotal] => 3.5
+                )
+
+            [10] => Array
+                (
+                    [type] => boissons
+                    [id] => 4
+                    [name] => La Frapp’Attitude
+                    [qty] => 1
+                    [price] => 2.50
+                    [subtotal] => 2.5
+                )
+
+            [11] => Array
+                (
+                    [type] => boissons
+                    [id] => 3
+                    [name] => La Zénitude
+                    [qty] => 1
+                    [price] => 2.50
+                    [subtotal] => 2.5
+                )
+
+        )
+
+    [total] => 454.2
+)
+Array
+(
+    [items] => Array
+        (
+            [0] => Array
+                (
+                    [type] => menus
+                    [id] => 3
+                    [name] => L'audacieux Comfort
+                    [qty] => 14
+                    [price] => 12.50
+                    [subtotal] => 175
+                )
+
+            [1] => Array
+                (
+                    [type] => menus
+                    [id] => 2
+                    [name] => L'intello Gourmand
+                    [qty] => 17
+                    [price] => 12.70
+                    [subtotal] => 215.9
+                )
+
+            [2] => Array
+                (
+                    [type] => menus
+                    [id] => 4
+                    [name] => L’Executive Express
+                    [qty] => 2
+                    [price] => 12.60
+                    [subtotal] => 25.2
+                )
+
+            [3] => Array
+                (
+                    [type] => produits
+                    [id] => 7
+                    [name] => Le Hot Collègue
+                    [qty] => 1
+                    [price] => 5.80
+                    [subtotal] => 5.8
+                )
+
+            [4] => Array
+                (
+                    [type] => produits
+                    [id] => 8
+                    [name] => Le Dog’ument Officiel
+                    [qty] => 2
+                    [price] => 6.50
+                    [subtotal] => 13
+                )
+
+            [5] => Array
+                (
+                    [type] => produits
+                    [id] => 17
+                    [name] => Les Nuggets de la Réu
+                    [qty] => 1
+                    [price] => 3.50
+                    [subtotal] => 3.5
+                )
+
+            [6] => Array
+                (
+                    [type] => produits
+                    [id] => 18
+                    [name] => Le Nuage Choco-Vanille
+                    [qty] => 1
+                    [price] => 3.00
+                    [subtotal] => 3
+                )
+
+            [7] => Array
+                (
+                    [type] => produits
+                    [id] => 4
+                    [name] => Le RH (Raclette & Hamburger)
+                    [qty] => 1
+                    [price] => 8.50
+                    [subtotal] => 8.5
+                )
+
+            [8] => Array
+                (
+                    [type] => produits
+                    [id] => 1
+                    [name] => Le Big Brain Burger
+                    [qty] => 1
+                    [price] => 8.50
+                    [subtotal] => 8.5
+                )
+
+            [9] => Array
+                (
+                    [type] => boissons
+                    [id] => 10
+                    [name] => Le Codeur
+                    [qty] => 1
+                    [price] => 3.50
+                    [subtotal] => 3.5
+                )
+
+            [10] => Array
+                (
+                    [type] => boissons
+                    [id] => 4
+                    [name] => La Frapp’Attitude
+                    [qty] => 1
+                    [price] => 2.50
+                    [subtotal] => 2.5
+                )
+
+            [11] => Array
+                (
+                    [type] => boissons
+                    [id] => 3
+                    [name] => La Zénitude
+                    [qty] => 1
+                    [price] => 2.50
+                    [subtotal] => 2.5
+                )
+
+        )
+
+    [total] => 466.9
+)
+Array
+(
+    [items] => Array
+        (
+            [0] => Array
+                (
+                    [type] => menus
+                    [id] => 3
+                    [name] => L'audacieux Comfort
+                    [qty] => 15
+                    [price] => 12.50
+                    [subtotal] => 187.5
+                )
+
+            [1] => Array
+                (
+                    [type] => menus
+                    [id] => 2
+                    [name] => L'intello Gourmand
+                    [qty] => 17
+                    [price] => 12.70
+                    [subtotal] => 215.9
+                )
+
+            [2] => Array
+                (
+                    [type] => menus
+                    [id] => 4
+                    [name] => L’Executive Express
+                    [qty] => 2
+                    [price] => 12.60
+                    [subtotal] => 25.2
+                )
+
+            [3] => Array
+                (
+                    [type] => produits
+                    [id] => 7
+                    [name] => Le Hot Collègue
+                    [qty] => 1
+                    [price] => 5.80
+                    [subtotal] => 5.8
+                )
+
+            [4] => Array
+                (
+                    [type] => produits
+                    [id] => 8
+                    [name] => Le Dog’ument Officiel
+                    [qty] => 2
+                    [price] => 6.50
+                    [subtotal] => 13
+                )
+
+            [5] => Array
+                (
+                    [type] => produits
+                    [id] => 17
+                    [name] => Les Nuggets de la Réu
+                    [qty] => 1
+                    [price] => 3.50
+                    [subtotal] => 3.5
+                )
+
+            [6] => Array
+                (
+                    [type] => produits
+                    [id] => 18
+                    [name] => Le Nuage Choco-Vanille
+                    [qty] => 1
+                    [price] => 3.00
+                    [subtotal] => 3
+                )
+
+            [7] => Array
+                (
+                    [type] => produits
+                    [id] => 4
+                    [name] => Le RH (Raclette & Hamburger)
+                    [qty] => 1
+                    [price] => 8.50
+                    [subtotal] => 8.5
+                )
+
+            [8] => Array
+                (
+                    [type] => produits
+                    [id] => 1
+                    [name] => Le Big Brain Burger
+                    [qty] => 1
+                    [price] => 8.50
+                    [subtotal] => 8.5
+                )
+
+            [9] => Array
+                (
+                    [type] => boissons
+                    [id] => 10
+                    [name] => Le Codeur
+                    [qty] => 1
+                    [price] => 3.50
+                    [subtotal] => 3.5
+                )
+
+            [10] => Array
+                (
+                    [type] => boissons
+                    [id] => 4
+                    [name] => La Frapp’Attitude
+                    [qty] => 1
+                    [price] => 2.50
+                    [subtotal] => 2.5
+                )
+
+            [11] => Array
+                (
+                    [type] => boissons
+                    [id] => 3
+                    [name] => La Zénitude
+                    [qty] => 1
+                    [price] => 2.50
+                    [subtotal] => 2.5
+                )
+
+        )
+
+    [total] => 479.4
+)
+Array
+(
+    [items] => Array
+        (
+            [0] => Array
+                (
+                    [type] => menus
+                    [id] => 3
+                    [name] => L'audacieux Comfort
+                    [qty] => 15
+                    [price] => 12.50
+                    [subtotal] => 187.5
+                )
+
+            [1] => Array
+                (
+                    [type] => menus
+                    [id] => 2
+                    [name] => L'intello Gourmand
+                    [qty] => 17
+                    [price] => 12.70
+                    [subtotal] => 215.9
+                )
+
+            [2] => Array
+                (
+                    [type] => menus
+                    [id] => 4
+                    [name] => L’Executive Express
+                    [qty] => 3
+                    [price] => 12.60
+                    [subtotal] => 37.8
+                )
+
+            [3] => Array
+                (
+                    [type] => produits
+                    [id] => 7
+                    [name] => Le Hot Collègue
+                    [qty] => 1
+                    [price] => 5.80
+                    [subtotal] => 5.8
+                )
+
+            [4] => Array
+                (
+                    [type] => produits
+                    [id] => 8
+                    [name] => Le Dog’ument Officiel
+                    [qty] => 2
+                    [price] => 6.50
+                    [subtotal] => 13
+                )
+
+            [5] => Array
+                (
+                    [type] => produits
+                    [id] => 17
+                    [name] => Les Nuggets de la Réu
+                    [qty] => 1
+                    [price] => 3.50
+                    [subtotal] => 3.5
+                )
+
+            [6] => Array
+                (
+                    [type] => produits
+                    [id] => 18
+                    [name] => Le Nuage Choco-Vanille
+                    [qty] => 1
+                    [price] => 3.00
+                    [subtotal] => 3
+                )
+
+            [7] => Array
+                (
+                    [type] => produits
+                    [id] => 4
+                    [name] => Le RH (Raclette & Hamburger)
+                    [qty] => 1
+                    [price] => 8.50
+                    [subtotal] => 8.5
+                )
+
+            [8] => Array
+                (
+                    [type] => produits
+                    [id] => 1
+                    [name] => Le Big Brain Burger
+                    [qty] => 1
+                    [price] => 8.50
+                    [subtotal] => 8.5
+                )
+
+            [9] => Array
+                (
+                    [type] => boissons
+                    [id] => 10
+                    [name] => Le Codeur
+                    [qty] => 1
+                    [price] => 3.50
+                    [subtotal] => 3.5
+                )
+
+            [10] => Array
+                (
+                    [type] => boissons
+                    [id] => 4
+                    [name] => La Frapp’Attitude
+                    [qty] => 1
+                    [price] => 2.50
+                    [subtotal] => 2.5
+                )
+
+            [11] => Array
+                (
+                    [type] => boissons
+                    [id] => 3
+                    [name] => La Zénitude
+                    [qty] => 1
+                    [price] => 2.50
+                    [subtotal] => 2.5
+                )
+
+        )
+
+    [total] => 492
+)

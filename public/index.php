@@ -1,24 +1,29 @@
 <?php
 session_start();
 
-// 1) Si on veut se connecter / déconnecter
+// 1) Pages publiques : login/auth et inscription
 $section = $_GET['section'] ?? null;
+
 if ($section === 'auth') {
     require __DIR__ . '/../controller/AuthController.php';
     exit;
 }
 
-// 2) Si pas d’utilisateur en session → on va au login
+if ($section === 'register') {
+    require __DIR__ . '/../controller/RegisterController.php';
+    exit;
+}
+
+// 2) Si pas d’utilisateur en session → on redirige vers le login
 if (!isset($_SESSION['user'])) {
     header('Location: index.php?section=auth');
     exit;
 }
 
-// 3) Choix de la section par défaut selon le rôle
+// 3) Section par défaut selon le rôle
 $role = $_SESSION['user']['role_id'];
 if ($section === null) {
-    // Admin → vue des produits, Prépa/Accueil → vue des commandes
-    $section = $role === 1 ? 'produit' : 'commande';
+    $section = ($role === 1) ? 'produit' : 'commande';
 }
 
 // 4) Dispatch vers le controller adéquat

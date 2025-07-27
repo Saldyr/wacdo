@@ -17,10 +17,8 @@ class Commande extends Model
         ?int $boisson_id = null,
         string $order_type = 'sur_place'
     ): bool {
-        $sql = "INSERT INTO commande 
-                (order_date_commande, order_heure_livraison, order_statut_commande,
-                 order_numero_ticket, user_id, boisson_id, order_type)
-                VALUES (?, ?, ?, ?, ?, ?, ?)";
+        // SQL sur une seule ligne sans antislash ni saut de ligne
+        $sql = "INSERT INTO commande (order_date_commande, order_heure_livraison, order_statut_commande, order_numero_ticket, user_id, boisson_id, order_type) VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([
             $date_commande,
@@ -43,15 +41,8 @@ class Commande extends Model
         ?int $boisson_id = null,
         string $order_type = 'sur_place'
     ): bool {
-        $sql = "UPDATE commande SET
-                    order_date_commande   = ?,
-                    order_heure_livraison = ?,
-                    order_statut_commande = ?,
-                    order_numero_ticket   = ?,
-                    user_id               = ?,
-                    boisson_id            = ?,
-                    order_type            = ?
-                WHERE order_id = ?";
+        // SQL sur une seule ligne sans retour
+        $sql = "UPDATE commande SET order_date_commande = ?, order_heure_livraison = ?, order_statut_commande = ?, order_numero_ticket = ?, user_id = ?, boisson_id = ?, order_type = ? WHERE order_id = ?";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([
             $date_commande,
@@ -88,8 +79,7 @@ class Commande extends Model
     public function getByStatus(string $statut): array
     {
         $stmt = $this->db->prepare(
-            "SELECT * FROM commande WHERE order_statut_commande = ? 
-             ORDER BY order_date_commande DESC, order_heure_livraison ASC"
+            "SELECT * FROM commande WHERE order_statut_commande = ? ORDER BY order_date_commande DESC, order_heure_livraison ASC"
         );
         $stmt->execute([$statut]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -142,8 +132,7 @@ class Commande extends Model
     public function getLastTicketForDate(string $date): int
     {
         $stmt = $this->db->prepare(
-            "SELECT MAX(CAST(order_numero_ticket AS UNSIGNED)) AS max_seq
-            FROM commande WHERE order_date_commande = ?"
+            "SELECT MAX(CAST(order_numero_ticket AS UNSIGNED)) AS max_seq FROM commande WHERE order_date_commande = ?"
         );
         $stmt->execute([$date]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -152,7 +141,22 @@ class Commande extends Model
 
     public function generateNextTicket(string $date): string
     {
-        $next = $this->getLastTicketForDate($date) + 1;
+        $last = $this->getLastTicketForDate($date);
+        $next = $last + 1;
+        if ($next > 100) {
+            $next = 0;
+        }
         return str_pad((string)$next, 3, '0', STR_PAD_LEFT);
+    }
+
+    public function getAllByUser(int $userId): array
+    {
+        $sql  = "SELECT * 
+                FROM commande 
+                WHERE user_id = ?
+                ORDER BY order_date_commande DESC, order_id DESC";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$userId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

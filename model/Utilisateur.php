@@ -43,11 +43,19 @@ class Utilisateur extends Model
     //Ajoute un nouvel utilisateur
     public function add(string $prenom, string $nom, string $email, string $passwordHash, int $roleId): bool
     {
+        $dateCreation = date('Y-m-d');
         $sql  = "INSERT INTO utilisateur 
-                    (user_prenom, user_nom, user_mail, user_password, role_id) 
-                    VALUES (?, ?, ?, ?, ?)";
+                (user_prenom, user_nom, user_mail, user_password, user_date_creation, role_id) 
+                VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $this->db->prepare($sql);
-        return $stmt->execute([$prenom, $nom, $email, $passwordHash, $roleId]);
+        return $stmt->execute([
+            $prenom,
+            $nom,
+            $email,
+            $passwordHash,
+            $dateCreation,
+            $roleId
+        ]);
     }
 
     //Met à jour un utilisateur existant

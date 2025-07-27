@@ -3,12 +3,12 @@ require_once 'Model.php';
 
 class CommandeMenu extends Model
 {
-    // Ajoute un menu à une commande avec une quantité
-    public function add($order_id, $menu_id, $quantite = 1)
+    // Ajoute un menu à une commande avec une quantité et (optionnellement) une boisson incluse
+    public function add(int $order_id, int $menu_id, int $quantite = 1, ?int $menu_boisson_id = null)
     {
-        $sql = "INSERT INTO commande_menu (order_id, menu_id, order_menu_quantite) VALUES (?, ?, ?)";
+        $sql = "INSERT INTO commande_menu (order_id, menu_id, order_menu_quantite, menu_boisson_id) VALUES (?, ?, ?, ?)";
         $stmt = $this->db->prepare($sql);
-        return $stmt->execute([$order_id, $menu_id, $quantite]);
+        return $stmt->execute([$order_id, $menu_id, $quantite, $menu_boisson_id]);
     }
 
     // Met à jour la quantité d'un menu pour une commande donnée
@@ -28,7 +28,7 @@ class CommandeMenu extends Model
     }
 
     // Récupère tous les menus liés à une commande
-    public function getMenusByCommande($order_id)
+    public function getMenusByCommande(int $order_id): array
     {
         $sql = "SELECT * FROM commande_menu WHERE order_id = ?";
         $stmt = $this->db->prepare($sql);
@@ -44,4 +44,3 @@ class CommandeMenu extends Model
         return $stmt->execute([$order_id]);
     }
 }
-?>
