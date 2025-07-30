@@ -159,4 +159,30 @@ class Commande extends Model
         $stmt->execute([$userId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function assignToLivreur(int $orderId, int $livreurId): bool
+    {
+        $sql = "
+            UPDATE commande
+                SET livreur_id = ?,
+                    order_statut_commande = 'en_livraison'
+            WHERE order_id = ?
+        ";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([$livreurId, $orderId]);
+    }
+
+    public function getByLivreur(int $livreurId): array
+    {
+        $sql = "
+            SELECT *
+                FROM commande
+            WHERE livreur_id = ?
+                AND order_statut_commande = 'en_livraison'
+            ORDER BY order_date_commande DESC, order_heure_livraison ASC
+        ";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$livreurId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

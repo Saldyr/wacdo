@@ -7,6 +7,11 @@ require_once __DIR__ . '/../model/Boisson.php';
 $mM = new Menu();
 $pM = new Produit();
 $bM = new Boisson();
+
+$menusCommandes    = $menusCmd    ?? [];
+$produitsCommandes = $prodsCmd    ?? [];
+$boissonsCommandes = $bevCmd      ?? [];
+
 ?>
 
 <?php include __DIR__ . '/header.php'; ?>
@@ -91,7 +96,7 @@ $bM = new Boisson();
 <?php endif; ?>
 
 <p style="margin-top:2em;">
-    <a href="index.php?section=commande&action=listClient">« Retour à mes commandes</a>
+    <a href="index.php?section=commande&action=listClient">Retour à mes commandes</a>
 </p>
 
 <?php include __DIR__ . '/footer.php'; ?>

@@ -5,8 +5,8 @@
 // A) BOOTSTRAP & MODELS
 // -----------------------------------------------------------------------------
 require_once __DIR__ . '/../lib/Auth.php';
-// Autorise Admin (1), Manager (2), Prépa/Accueil (3) et Clients (5)
-Auth::check([1, 2, 3, 5]);
+// Autorise Admin (1), Manager (2), Prépa/Accueil (3), Livreurs (4) et Clients (5)
+Auth::check([1, 2, 3, 4, 5]);
 
 require_once __DIR__ . '/../model/Commande.php';
 require_once __DIR__ . '/../model/CommandeMenu.php';
@@ -226,10 +226,30 @@ if ($role === 5 && $action === 'listClient') {
 }
 
 // -----------------------------------------------------------------------------
-// G) BACK-OFFICE – CRÉATION, MODIFICATION, SUPPRESSION & MARQUAGE
+// G) LIVREUR – prise en charge
+// -----------------------------------------------------------------------------
+if ($role === 4 && $action === 'prendre' && $method === 'POST') {
+    // CSRF
+    if (!isset($_POST['csrf'], $_SESSION['csrf']) || $_POST['csrf'] !== $_SESSION['csrf']) {
+        exit('CSRF détecté');
+    }
+    // Récupère l’ID de la commande
+    $orderId       = (int)($_POST['id'] ?? 0);
+    $currentUserId = $_SESSION['user']['user_id'];
+
+    // Assigne et passe en "en_livraison"
+    $cmdM->assignToLivreur($orderId, $currentUserId);
+
+    // Redirection vers la liste
+    header('Location: index.php?section=commande');
+    exit;
+}
+
+// -----------------------------------------------------------------------------
+// H) BACK-OFFICE – CRÉATION, MODIFICATION, SUPPRESSION & MARQUAGE
 // -----------------------------------------------------------------------------
 
-// G-0: Affichage du formulaire de création (GET)
+// H-0: Affichage du formulaire de création (GET)
 if ($method === 'GET' && $action === 'add' && in_array($role, [1, 3], true)) {
     // Charger les données pour le formulaire
     $menus    = $mM->getAll();
@@ -249,7 +269,7 @@ if ($method === 'GET' && $action === 'add' && in_array($role, [1, 3], true)) {
     exit;
 }
 
-// G-1: Création de la commande (POST)
+// H-1: Création de la commande (POST)
 if ($method === 'POST' && $action === 'add') {
     // CSRF + droits
     if (!isset($_POST['csrf'], $_SESSION['csrf']) || $_POST['csrf'] !== $_SESSION['csrf']) {
@@ -275,7 +295,7 @@ if ($method === 'POST' && $action === 'add') {
     exit;
 }
 
-// G-2: Affichage du formulaire de modification (GET)
+// H-2: Affichage du formulaire de modification (GET)
 if ($method === 'GET' && $action === 'edit' && in_array($role, [1, 3], true)) {
     $oid       = (int)($_GET['id'] ?? 0);
     $commande  = $cmdM->get($oid);
@@ -328,7 +348,7 @@ if ($method === 'GET' && $action === 'edit' && in_array($role, [1, 3], true)) {
     exit;
 }
 
-// G-4: Modification de la commande (POST)
+// H-4: Modification de la commande (POST)
 if ($method === 'POST' && $action === 'edit') {
     // CSRF + droits
     if (!isset($_POST['csrf'], $_SESSION['csrf']) || $_POST['csrf'] !== $_SESSION['csrf']) {
@@ -357,16 +377,26 @@ if ($method === 'POST' && $action === 'edit') {
 
     foreach ($_POST['menus'] ?? [] as $m => $q) {
         $q = (int)$q;
-        if ($q < 1) continue;
-        // Boissons gratuites par menu
+        if ($q < 1) {
+            continue;
+        }
+
+        // map boisson_id => quantité de boissons offertes
         $freeMap = $_POST['menu_boissons'][$m] ?? [];
-        for ($i = 0; $i < $q; $i++) {
-            foreach ($freeMap as $b => $bq) {
-                for ($j = 0; $j < (int)$bq; $j++) {
-                    $cmM->add($oid, $m, 1, $b);
-                }
+
+        // 1) Insérer d’abord toutes les boissons offertes
+        $totalFree = 0;
+        foreach ($freeMap as $b => $bq) {
+            $bq = (int)$bq;
+            $totalFree += $bq;
+            for ($j = 0; $j < $bq; $j++) {
+                $cmM->add($oid, $m, 1, $b);
             }
-            // Si pas de boisson restante à associer
+        }
+
+        // 2) Insérer enfin les menus "nus" pour atteindre la quantité demandée
+        $remaining = $q - $totalFree;
+        for ($i = 0; $i < $remaining; $i++) {
             $cmM->add($oid, $m, 1, null);
         }
     }
@@ -387,7 +417,7 @@ if ($method === 'POST' && $action === 'edit') {
     exit;
 }
 
-// G-5: Suppression de la commande (POST)
+// H-5: Suppression de la commande (POST)
 if ($method === 'POST' && $action === 'delete') {
     // CSRF + droits
     if (!isset($_POST['csrf'], $_SESSION['csrf']) || $_POST['csrf'] !== $_SESSION['csrf']) {
@@ -408,7 +438,7 @@ if ($method === 'POST' && $action === 'delete') {
     exit;
 }
 
-// G-6: Marquer un nouveau statut (POST)
+// H-6: Marquer un nouveau statut (POST)
 if ($method === 'POST' && $action === 'markReady') {
     // CSRF
     if (!isset($_POST['csrf'], $_SESSION['csrf']) || $_POST['csrf'] !== $_SESSION['csrf']) {
@@ -443,7 +473,7 @@ if ($method === 'POST' && $action === 'markReady') {
 
 
 // -----------------------------------------------------------------------------
-// H) BACK-OFFICE: LISTE DES COMMANDES PAR RÔLE
+// I) BACK-OFFICE: LISTE DES COMMANDES PAR RÔLE
 // -----------------------------------------------------------------------------
 $all = $cmdM->getAll();
 if ($role === 2)      $commandes = array_filter($all, fn($c) => $c['order_statut_commande'] === 'en_preparation');
@@ -455,8 +485,16 @@ elseif ($role === 3)  $commandes = array_filter(
         true
     )
 );
-elseif ($role === 4)  $commandes = array_filter($all, fn($c) => $c['order_statut_commande'] === 'en_livraison');
-else               $commandes = array_filter($all, fn($c) => !in_array($c['order_statut_commande'], ['servie', 'livree'], true));
+elseif ($role === 4) {
+    $uid = $_SESSION['user']['user_id'];
+    $commandes = array_filter($all, function ($c) use ($uid) {
+        return $c['order_statut_commande'] === 'en_livraison'
+            && (
+                $c['livreur_id'] === null
+                || $c['livreur_id'] === $uid
+            );
+    });
+} else               $commandes = array_filter($all, fn($c) => !in_array($c['order_statut_commande'], ['servie', 'livree'], true));
 
 $menusParCommande = [];
 $produitsParCommande = [];
