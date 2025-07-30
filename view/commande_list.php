@@ -3,7 +3,7 @@
 <h1>Liste des commandes</h1>
 
 <p>
-    <?php if ($_SESSION['user']['role_id'] !== 2): ?>
+    <?php if (in_array($_SESSION['user']['role_id'], [1, 3], true)): ?>
         <a href="index.php?section=commande&action=add">Passer une nouvelle commande</a>
     <?php endif; ?>
 </p>
@@ -12,43 +12,61 @@
     <p>Aucune commande enregistrée.</p>
 <?php else: ?>
     <ul>
-        <?php foreach ($commandes as $cmd): ?>
-            <li>
-                <strong>Commande #<?= (int)$cmd['order_id'] ?></strong><br>
-                Date : <?= htmlspecialchars($cmd['order_date_commande'], ENT_QUOTES) ?> —
-                Heure : <?= htmlspecialchars($cmd['order_heure_livraison'] ?: '--', ENT_QUOTES) ?><br>
+        <?php foreach ($commandes as $cmd):
+            $oid    = (int) $cmd['order_id'];
+            $status = $cmd['order_statut_commande'];
+            $type   = $cmd['order_type'];
+            $role   = $_SESSION['user']['role_id'];
 
-                Type :
-                <?php
-                switch ($cmd['order_type']) {
-                    case 'a_emporter':
-                        echo 'À emporter';
-                        break;
-                    case 'livraison':
-                        echo 'Livraison';
-                        break;
-                    default:
-                        echo 'Sur place';
+            // Déterminer si on peut afficher un bouton "Marquer…" et son libellé
+            $canMark = false;
+            $label   = '';
+
+            if ($role === 2 && $status === 'en_preparation') {
+                $canMark = true;
+                $label   = 'Marquer prête';
+            } elseif ($role === 3 && $status === 'pret') {
+                if (in_array($type, ['sur_place', 'a_emporter'], true)) {
+                    $canMark = true;
+                    $label   = 'Remettre au client';
+                } elseif ($type === 'livraison') {
+                    $canMark = true;
+                    $label   = 'Remettre au livreur';
                 }
-                ?><br>
+            } elseif ($role === 4 && $status === 'en_livraison') {
+                $canMark = true;
+                $label   = 'Marquer livrée';
+            }
+        ?>
+            <li>
+                <strong>Commande #<?= $oid ?></strong><br>
+                Date : <?= htmlspecialchars($cmd['order_date_commande'], ENT_QUOTES) ?> —
+                Heure : <?= htmlspecialchars($cmd['order_heure_livraison'] ?: '--', ENT_QUOTES) ?><br>
+                Type : <?php
+                        switch ($type) {
+                            case 'a_emporter':
+                                echo 'À emporter';
+                                break;
+                            case 'livraison':
+                                echo 'Livraison';
+                                break;
+                            default:
+                                echo 'Sur place';
+                                break;
+                        }
+                        ?><br>
+                Statut :  <?= htmlspecialchars($STATUT_LABELS[$cmd['order_statut_commande']] ?? $cmd['order_statut_commande'], ENT_QUOTES) ?><br>
+                Ticket : <?= htmlspecialchars($cmd['order_numero_ticket'], ENT_QUOTES) ?><br>
+                Client : #<?= (int) $cmd['user_id'] ?><br><br>
 
-                Statut : <?= htmlspecialchars($cmd['order_statut_commande'], ENT_QUOTES) ?><br>
-                Ticket : <?= htmlspecialchars($cmd['order_numero_ticket'], ENT_QUOTES) ?><br>
-                Utilisateur : #<?= (int)$cmd['user_id'] ?><br><br>
-
-                <em>Menus & boissons incluses :</em>
-                <?php if (!empty($menusParCommande[$cmd['order_id']])): ?>
+                <em>Menus & boissons :</em>
+                <?php if (!empty($menusParCommande[$oid])): ?>
                     <ul>
-                        <?php foreach ($menusParCommande[$cmd['order_id']] as $m): ?>
+                        <?php foreach ($menusParCommande[$oid] as $m): ?>
                             <li>
-                                <?= htmlspecialchars($m['menu_nom'], ENT_QUOTES) ?>
-                                (x<?= (int)$m['order_menu_quantite'] ?>)
+                                <?= htmlspecialchars($m['menu_nom'], ENT_QUOTES) ?> (x<?= (int) $m['order_menu_quantite'] ?>)
                                 <?php if (!empty($m['menu_boisson_id'])): ?>
-                                    — Boisson gratuite :
-                                    <?= htmlspecialchars(
-                                        $boissonMap[$m['menu_boisson_id']]['boisson_nom'] ?? '—',
-                                        ENT_QUOTES
-                                    ) ?>
+                                    — Boisson offerte : <?= htmlspecialchars($boissonMap[$m['menu_boisson_id']]['boisson_nom'] ?? '—', ENT_QUOTES) ?>
                                 <?php endif; ?>
                             </li>
                         <?php endforeach; ?>
@@ -58,68 +76,57 @@
                 <?php endif; ?>
 
                 <em>Produits supplémentaires :</em>
-                <?php if (!empty($produitsParCommande[$cmd['order_id']])): ?>
+                <?php if (!empty($produitsParCommande[$oid])): ?>
                     <ul>
-                        <?php foreach ($produitsParCommande[$cmd['order_id']] as $p): ?>
+                        <?php foreach ($produitsParCommande[$oid] as $p): ?>
                             <li>
-                                <?= htmlspecialchars($p['product_nom'], ENT_QUOTES) ?>
-                                (x<?= (int)$p['order_product_quantite'] ?>)
+                                <?= htmlspecialchars($p['product_nom'], ENT_QUOTES) ?> (x<?= (int) $p['order_product_quantite'] ?>)
                             </li>
                         <?php endforeach; ?>
                     </ul>
                 <?php else: ?>
-                    <p><em>Aucun produit supplémentaire.</em></p>
+                    <p><em>Aucun produit.</em></p>
                 <?php endif; ?>
 
                 <em>Boissons à l’unité :</em>
-                <?php if (!empty($boissonsUniteParCommande[$cmd['order_id']])): ?>
+                <?php if (!empty($boissonsUniteParCommande[$oid])): ?>
                     <ul>
-                        <?php foreach ($boissonsUniteParCommande[$cmd['order_id']] as $brow):
-                            // On suppose que getByCommande() renvoie ['boisson_id','order_boisson_quantite']
+                        <?php foreach ($boissonsUniteParCommande[$oid] as $brow):
                             $bo = $boissonMap[$brow['boisson_id']] ?? null;
                         ?>
                             <li>
-                                <?= htmlspecialchars($bo['boisson_nom'] ?? '—', ENT_QUOTES) ?>
-                                (x<?= (int)$brow['order_boisson_quantite'] ?>)
+                                <?= htmlspecialchars($bo['boisson_nom'] ?? '—', ENT_QUOTES) ?> (x<?= (int) $brow['order_boisson_quantite'] ?>)
                             </li>
                         <?php endforeach; ?>
                     </ul>
                 <?php else: ?>
-                    <p><em>Aucune boisson à l’unité.</em></p>
+                    <p><em>Aucune boisson.</em></p>
                 <?php endif; ?>
 
-                <?php $total = (new Commande())->getTotal((int)$cmd['order_id']); ?>
-                <p><strong>Total :</strong> <?= number_format($total, 2) ?> €</p>
+                <?php $total = (new Commande())->getTotal($oid); ?>
+                <p><strong>Total :</strong> <?= number_format($total, 2, ',', ' ') ?> €</p>
 
                 <div style="margin-top:1em;">
-                    <?php if ($_SESSION['user']['role_id'] === 2): ?>
+                    <?php if ($canMark): ?>
                         <form method="post"
                             action="index.php?section=commande&action=markReady"
                             style="display:inline">
-                            <input type="hidden" name="id" value="<?= (int)$cmd['order_id'] ?>">
-                            <input type="hidden" name="csrf"
-                                value="<?= htmlspecialchars($_SESSION['csrf'], ENT_QUOTES) ?>">
-                            <button type="submit"
-                                <?= in_array(
-                                    strtolower($cmd['order_statut_commande']),
-                                    ['pret', 'en_livraison', 'livree'],
-                                    true
-                                ) ? 'disabled' : '' ?>>
-                                Marquer <?= $cmd['order_type'] === 'a_emporter' ? 'en livraison' : 'prête' ?>
-                            </button>
+                            <input type="hidden" name="id" value="<?= $oid ?>">
+                            <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf'], ENT_QUOTES) ?>">
+                            <button type="submit"><?= $label ?></button>
                         </form>
-                    <?php else: ?>
-                        <a href="index.php?section=commande&action=edit&id=<?= (int)$cmd['order_id'] ?>">
-                            Modifier
-                        </a>
+                    <?php endif; ?>
+
+                    <?php if (in_array($role, [1, 3], true)): ?>
+                        &nbsp;
+                        <a href="index.php?section=commande&action=edit&id=<?= $oid ?>">Modifier</a>
                         &nbsp;|&nbsp;
                         <form method="post"
                             action="index.php?section=commande&action=delete"
                             style="display:inline"
-                            onsubmit="return confirm('Supprimer cette commande ?')">
-                            <input type="hidden" name="id" value="<?= (int)$cmd['order_id'] ?>">
-                            <input type="hidden" name="csrf"
-                                value="<?= htmlspecialchars($_SESSION['csrf'], ENT_QUOTES) ?>">
+                            onsubmit="return confirm('Supprimer la commande #<?= $oid ?> ?')">
+                            <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf'], ENT_QUOTES) ?>">
+                            <input type="hidden" name="id" value="<?= $oid ?>">
                             <button type="submit">Supprimer</button>
                         </form>
                     <?php endif; ?>
@@ -131,6 +138,6 @@
     </ul>
 <?php endif; ?>
 
-<p><a href="index.php?section=commande">← Retour à l’accueil</a></p>
+<p><a href="index.php?section=commande">← Retour à l'accueil</a></p>
 
 <?php include __DIR__ . '/footer.php'; ?>

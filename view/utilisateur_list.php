@@ -22,19 +22,44 @@
                 <td><?= htmlspecialchars($u['user_nom'],   ENT_QUOTES) ?></td>
                 <td><?= htmlspecialchars($u['user_mail'],  ENT_QUOTES) ?></td>
                 <td>
-                    <?= $u['role_id'] == 1
-                        ? 'Admin'
-                        : ($u['role_id'] == 2 ? 'Préparation' : 'Accueil')
+                    <?php
+                    // On mappe tous les rôles connus
+                    switch ((int)$u['role_id']) {
+                        case 1:
+                            echo 'Administrateur';
+                            break;
+                        case 2:
+                            echo 'Préparateur';
+                            break;
+                        case 3:
+                            echo 'Caissier(e)';
+                            break;
+                        case 4:
+                            echo 'Livreur(se)';
+                            break;
+                        case 5:
+                            echo 'Client(e)';
+                            break;
+                        default:
+                            echo 'Inconnu';
+                    }
                     ?>
                 </td>
                 <td>
                     <!-- Édition -->
-                    <a href="index.php?section=utilisateur&action=edit&id=<?= $u['user_id'] ?>">✏️</a>
+                    <a href="index.php?section=utilisateur&action=edit&id=<?= $u['user_id'] ?>">
+                        ✏️
+                    </a>
                     <!-- Suppression -->
-                    <form method="post" action="index.php?section=utilisateur&action=delete" style="display:inline">
+                    <form method="post"
+                        action="index.php?section=utilisateur&action=delete"
+                        style="display:inline">
                         <input type="hidden" name="id" value="<?= $u['user_id'] ?>">
                         <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?>">
-                        <button type="submit" onclick="return confirm('Supprimer cet utilisateur ?')">🗑️</button>
+                        <button type="submit"
+                            onclick="return confirm('Supprimer cet utilisateur ?')">
+                            🗑️
+                        </button>
                     </form>
                 </td>
             </tr>

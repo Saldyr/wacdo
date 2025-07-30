@@ -1,4 +1,5 @@
 <?php include __DIR__ . '/header.php'; ?>
+<?php $STATUT_LABELS = require __DIR__ . '/../config/statuses.php'; ?>
 
 <h1>Modifier la commande #<?= (int)$commande['order_id'] ?></h1>
 <p><a href="index.php?section=commande">← Retour à la liste</a></p>
@@ -46,46 +47,33 @@
 
     <!-- Statut -->
     <div style="margin-top:1em;">
-        <label for="order_statut_commande">Statut :</label><br>
-        <select id="order_statut_commande"
-            name="order_statut_commande"
-            required>
-            <optgroup label="Sur place" data-type="sur_place">
-                <option value="en_preparation"
-                    <?= $commande['order_statut_commande'] === 'en_preparation' ? 'selected' : '' ?>>
-                    En cours de préparation
+        <label for="order_statut_commande">Statut :</label><br>
+        <select id="order_statut_commande" name="order_statut_commande" required>
+            <?php foreach ($STATUT_LABELS as $code => $libelle):
+                // on veut toujours pouvoir revenir en préparation
+                $allowed = match ($code) {
+                    'en_preparation'          => true,                             // TOUJOURS proposé
+                    'pret'                    => in_array($commande['order_type'], ['sur_place', 'a_emporter', 'livraison'], true),
+                    'servie'                  => in_array($commande['order_type'], ['sur_place', 'a_emporter'], true),
+                    'en_livraison', 'livree'  => $commande['order_type'] === 'livraison',
+                    default                   => false,
+                };
+                if (!$allowed) continue;
+                // on définit data-type pour le JS de filtrage
+                $dataType = in_array($code, ['en_preparation', 'pret', 'servie'], true)
+                    ? 'sur_place_a_emporter'
+                    : 'livraison';
+            ?>
+                <option
+                    data-type="<?= $dataType ?>"
+                    value="<?= $code ?>"
+                    <?= $commande['order_statut_commande'] === $code ? 'selected' : '' ?>>
+                    <?= htmlspecialchars($libelle, ENT_QUOTES) ?>
                 </option>
-                <option value="pret"
-                    <?= $commande['order_statut_commande'] === 'pret' ? 'selected' : '' ?>>
-                    Commande prête
-                </option>
-            </optgroup>
-            <optgroup label="À emporter" data-type="a_emporter" style="display:none">
-                <option value="en_preparation"
-                    <?= $commande['order_statut_commande'] === 'en_preparation' ? 'selected' : '' ?>>
-                    En cours de préparation
-                </option>
-                <option value="pret"
-                    <?= $commande['order_statut_commande'] === 'pret' ? 'selected' : '' ?>>
-                    Commande prête
-                </option>
-            </optgroup>
-            <optgroup label="Livraison" data-type="livraison" style="display:none">
-                <option value="en_preparation"
-                    <?= $commande['order_statut_commande'] === 'en_preparation' ? 'selected' : '' ?>>
-                    En cours de préparation
-                </option>
-                <option value="en_livraison"
-                    <?= $commande['order_statut_commande'] === 'en_livraison' ? 'selected' : '' ?>>
-                    En livraison
-                </option>
-                <option value="livree"
-                    <?= $commande['order_statut_commande'] === 'livree' ? 'selected' : '' ?>>
-                    Livrée
-                </option>
-            </optgroup>
+            <?php endforeach; ?>
         </select>
     </div>
+
 
     <!-- Utilisateur (non modifiable) -->
     <div style="margin-top:1em;">
@@ -135,33 +123,32 @@
     </fieldset>
 
     <!-- Produits supplémentaires -->
-<fieldset style="margin-top:1em;">
-    <legend>Produits supplémentaires (quantité)</legend>
+    <fieldset style="margin-top:1em;">
+        <legend>Produits supplémentaires (quantité)</legend>
 
-    <?php foreach ($produitsParCategorie as $categorie => $liste): ?>
-        <section style="margin-bottom:1.5em;">
-            <h4 style="margin-bottom:0.5em;"><?= htmlspecialchars($categorie, ENT_QUOTES) ?></h4>
-            <?php foreach ($liste as $prod):
-                $pid  = (int)$prod['product_id'];
-                $pQty = $prodQty[$pid] ?? 0;
-            ?>
-                <div style="margin-bottom:0.5em;">
-                    <label>
-                        <?= htmlspecialchars($prod['product_nom'], ENT_QUOTES) ?> —
-                        <?= number_format($prod['product_prix'], 2) ?> €
-                        <input
-                            type="number"
-                            name="produits[<?= $pid ?>]"
-                            min="0"
-                            value="<?= $pQty ?>"
-                            style="width:60px; margin-left:10px;"
-                        >
-                    </label>
-                </div>
-            <?php endforeach; ?>
-        </section>
-    <?php endforeach; ?>
-</fieldset>
+        <?php foreach ($produitsParCategorie as $categorie => $liste): ?>
+            <section style="margin-bottom:1.5em;">
+                <h4 style="margin-bottom:0.5em;"><?= htmlspecialchars($categorie, ENT_QUOTES) ?></h4>
+                <?php foreach ($liste as $prod):
+                    $pid  = (int)$prod['product_id'];
+                    $pQty = $prodQty[$pid] ?? 0;
+                ?>
+                    <div style="margin-bottom:0.5em;">
+                        <label>
+                            <?= htmlspecialchars($prod['product_nom'], ENT_QUOTES) ?> —
+                            <?= number_format($prod['product_prix'], 2) ?> €
+                            <input
+                                type="number"
+                                name="produits[<?= $pid ?>]"
+                                min="0"
+                                value="<?= $pQty ?>"
+                                style="width:60px; margin-left:10px;">
+                        </label>
+                    </div>
+                <?php endforeach; ?>
+            </section>
+        <?php endforeach; ?>
+    </fieldset>
 
 
     <!-- Boissons à l'unité -->
@@ -194,21 +181,34 @@
 
 <script>
     (function() {
-        const status = document.getElementById('order_statut_commande');
-        document.querySelectorAll('input[name="order_type"]').forEach(radio => {
-            radio.addEventListener('change', () => {
-                const t = radio.value;
-                status.querySelectorAll('optgroup').forEach(og => {
-                    og.style.display = og.dataset.type === t ? '' : 'none';
-                });
-                status.querySelector(`optgroup[data-type="${t}"] option`).selected = true;
+        const statusSelect = document.getElementById('order_statut_commande');
+        const radios = document.querySelectorAll('input[name="order_type"]');
+
+        function filterOptions() {
+            const t = document.querySelector('input[name="order_type"]:checked').value;
+            const wantedGroup = (t === 'livraison') ? 'livraison' : 'sur_place_a_emporter';
+
+            [...statusSelect.options].forEach(opt => {
+                // on affiche toujours "en_preparation", et sinon on vérifie le groupe
+                if (opt.value === 'en_preparation') {
+                    opt.hidden = false;
+                } else {
+                    opt.hidden = opt.dataset.type !== wantedGroup;
+                }
             });
-        });
-        window.addEventListener('DOMContentLoaded', () => {
-            document.querySelector('input[name="order_type"]:checked')
-                .dispatchEvent(new Event('change'));
-        });
+            // coche la première visible
+            for (const opt of statusSelect.options) {
+                if (!opt.hidden) {
+                    opt.selected = true;
+                    break;
+                }
+            }
+        }
+
+        radios.forEach(r => r.addEventListener('change', filterOptions));
+        window.addEventListener('DOMContentLoaded', filterOptions);
     })();
 </script>
+
 
 <?php include __DIR__ . '/footer.php'; ?>

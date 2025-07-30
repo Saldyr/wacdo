@@ -2,7 +2,7 @@
 // controller/UtilisateurController.php
 
 require_once __DIR__ . '/../lib/Auth.php';
-// Seul le rôle admin (1) peut gérer les utilisateurs
+// Seul le rôle Admin (1) peut gérer les utilisateurs
 Auth::check([1]);
 
 require_once __DIR__ . '/../model/Utilisateur.php';
@@ -27,17 +27,26 @@ if (($_GET['action'] ?? null) === 'add') {
         if (!isset($_POST['csrf']) || $_POST['csrf'] !== $_SESSION['csrf']) {
             exit('CSRF détecté');
         }
+
         // Récupère et nettoie les champs
         $prenom   = trim($_POST['prenom']   ?? '');
         $nom      = trim($_POST['nom']      ?? '');
         $email    = trim($_POST['email']    ?? '');
-        $password = password_hash($_POST['password'] ?? '', PASSWORD_DEFAULT);
+        $password = $_POST['password']      ?? '';
         $role     = (int) ($_POST['role']   ?? 0);
 
-        // Appel au modèle pour insérer
-        $uModel->add($prenom, $nom, $email, $password, $role);
+        // 1b‑1) Vérifier unicité de l’email
+        if ($uModel->findByEmail($email)) {
+            $error = 'Cet email est déjà utilisé.';
+            require __DIR__ . '/../view/utilisateur_add.php';
+            exit;
+        }
 
-        // Redirection vers la liste mise à jour
+        // 1b‑2) Hasher le mot de passe et insérer
+        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+        $uModel->add($prenom, $nom, $email, $passwordHash, $role);
+
+        // Redirection vers la liste
         header('Location: index.php?section=utilisateur');
         exit;
     }
@@ -59,11 +68,23 @@ if (($_GET['action'] ?? null) === 'edit' && isset($_GET['id'])) {
         if (!isset($_POST['csrf']) || $_POST['csrf'] !== $_SESSION['csrf']) {
             exit('CSRF détecté');
         }
+
+        // Récupère et nettoie
         $prenom = trim($_POST['prenom']   ?? '');
         $nom    = trim($_POST['nom']      ?? '');
         $email  = trim($_POST['email']    ?? '');
         $role   = (int) ($_POST['role']   ?? 0);
 
+        // 1c‑1) Vérifier si email changé et déjà utilisé
+        $existing = $uModel->findByEmail($email);
+        if ($existing && (int)$existing['user_id'] !== $id) {
+            $error = 'Cet email est déjà utilisé par un autre compte.';
+            $user = ['user_id'=>$id,'user_prenom'=>$prenom,'user_nom'=>$nom,'user_mail'=>$email,'role_id'=>$role];
+            require __DIR__ . '/../view/utilisateur_edit.php';
+            exit;
+        }
+
+        // 1c‑2) Mettre à jour
         $uModel->update($id, $prenom, $nom, $email, $role);
         header('Location: index.php?section=utilisateur');
         exit;

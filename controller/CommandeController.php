@@ -1,6 +1,9 @@
 <?php
 // controller/CommandeController.php
 
+// -----------------------------------------------------------------------------
+// A) BOOTSTRAP & MODELS
+// -----------------------------------------------------------------------------
 require_once __DIR__ . '/../lib/Auth.php';
 // Autorise Admin (1), Manager (2), Prépa/Accueil (3) et Clients (5)
 Auth::check([1, 2, 3, 5]);
@@ -14,49 +17,59 @@ require_once __DIR__ . '/../model/Produit.php';
 require_once __DIR__ . '/../model/Boisson.php';
 require_once __DIR__ . '/../model/Categorie.php';
 
-// La session est démarrée dans public/index.php
-
-// REPÈRE A-1 : Initialisation du panier en session
+// -----------------------------------------------------------------------------
+// B) SESSION & PANIER INITIALIZATION
+// -----------------------------------------------------------------------------
+// B-1: Démarrage de la session déjà géré dans public/index.php
+// B-2: Initialisation du panier
 if (!isset($_SESSION['cart']) || !is_array($_SESSION['cart'])) {
     $_SESSION['cart'] = ['menus' => [], 'produits' => [], 'boissons' => []];
 }
 
-// Instanciation des modèles
+// -----------------------------------------------------------------------------
+// C) INSTANTIATION & CONTEXTE
+// -----------------------------------------------------------------------------
+// C-1: Instanciation des modèles
 $cmdM = new Commande();
 $mM   = new Menu();
 $pM   = new Produit();
 $bM   = new Boisson();
 $cM   = new Categorie();
+$cmM  = new CommandeMenu();
+$cpM  = new CommandeProduit();
+$cbM  = new CommandeBoisson();
 
-// ← AJOUTS ICI
-$cmM = new CommandeMenu();
-$cpM = new CommandeProduit();
-$cbM = new CommandeBoisson();
-
+// C-2: Contexte utilisateur
 $role   = $_SESSION['user']['role_id'] ?? null;
 $action = $_GET['action']            ?? '';
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
+// -----------------------------------------------------------------------------
+// D) UTILITAIRES
+// -----------------------------------------------------------------------------
 /**
- * REPÈRE B-1 : Fonction utilitaire pour renvoyer le panier en JSON (AJAX)
+ * D-1: Renvoie le panier en JSON pour requêtes AJAX
  */
 function sendCartJson(array $models)
 {
     $detail = ['items' => [], 'total' => 0];
     foreach (['menus', 'produits', 'boissons'] as $type) {
         $model = $models[$type];
-        foreach ($_SESSION['cart'][$type] as $id => $qty) {
+        foreach ($_SESSION['cart'][$type] as $id => $data) {
+            if ($type === 'menus') {
+                $qty     = (int)$data['qty'];
+                $freeBId = $data['boisson_id'];
+            } else {
+                $qty     = (int)$data;
+                $freeBId = null;
+            }
             $item = $model->get($id);
             if (!$item) continue;
-            $priceKey = $type === 'menus'
-                ? 'menu_prix'
-                : ($type === 'produits' ? 'product_prix' : 'boisson_prix');
-            $nameKey  = $type === 'menus'
-                ? 'menu_nom'
-                : ($type === 'produits' ? 'product_nom' : 'boisson_nom');
+            $priceKey = $type === 'menus' ? 'menu_prix' : ($type === 'produits' ? 'product_prix' : 'boisson_prix');
+            $nameKey  = $type === 'menus' ? 'menu_nom'  : ($type === 'produits' ? 'product_nom' : 'boisson_nom');
             $price    = (float)$item[$priceKey];
             $subtotal = $price * $qty;
-            $detail['items'][] = [
+            $entry = [
                 'type'     => $type,
                 'id'       => $id,
                 'name'     => $item[$nameKey],
@@ -64,7 +77,13 @@ function sendCartJson(array $models)
                 'price'    => $price,
                 'subtotal' => $subtotal,
             ];
-            $detail['total'] += $subtotal;
+            if ($type === 'menus' && $freeBId) {
+                $b = $models['boissons']->get($freeBId);
+                $entry['boisson_id']   = $freeBId;
+                $entry['boisson_name'] = $b['boisson_nom'] ?? '—';
+            }
+            $detail['items'][] = $entry;
+            $detail['total']  += $subtotal;
         }
     }
     header('Content-Type: application/json');
@@ -72,189 +91,167 @@ function sendCartJson(array $models)
     exit;
 }
 
-/**
- * REPÈRE C-1 : Ajout au panier (clients seulement)
- */
+// -----------------------------------------------------------------------------
+// E) AJAX: GESTION DU PANIER CLIENT
+// -----------------------------------------------------------------------------
+// E-1: Ajout au panier
 if ($role === 5 && $action === 'addCart') {
-    // C-1-a : modifier la session
-    $type = $_GET['type'] ?? '';
-    $id   = (int)($_GET['id'] ?? 0);
+    $type = $_REQUEST['type'] ?? '';
+    $id   = (int)($_REQUEST['id'] ?? 0);
     if (in_array($type, ['menus', 'produits', 'boissons'], true) && $id > 0) {
-        $_SESSION['cart'][$type][$id] = ($_SESSION['cart'][$type][$id] ?? 0) + 1;
+        if ($type === 'menus') {
+            $bid = isset($_REQUEST['boisson_id']) ? (int)$_REQUEST['boisson_id'] : null;
+            if (!isset($_SESSION['cart']['menus'][$id])) {
+                $_SESSION['cart']['menus'][$id] = ['qty' => 1, 'boisson_id' => $bid];
+            } else {
+                $_SESSION['cart']['menus'][$id]['qty']++;
+            }
+        } else {
+            $_SESSION['cart'][$type][$id] = ($_SESSION['cart'][$type][$id] ?? 0) + 1;
+        }
     }
-    // C-1-b : réponse AJAX vs redirection full-page
-    if (isset($_GET['ajax'])) {
-        sendCartJson(['menus' => $mM, 'produits' => $pM, 'boissons' => $bM]);
-    }
-    header('Location: index.php?section=commande');
+    if (isset($_REQUEST['ajax'])) sendCartJson(['menus' => $mM, 'produits' => $pM, 'boissons' => $bM]);
+    header('Location:index.php?section=commande');
     exit;
 }
-
-/**
- * REPÈRE C-2 : Retrait du panier (clients seulement)
- */
+// E-2: Retrait du panier
 if ($role === 5 && $action === 'removeCart') {
-    // C-2-a : modifier la session
-    $type = $_GET['type'] ?? '';
-    $id   = (int)($_GET['id'] ?? 0);
-    if (!empty($_SESSION['cart'][$type][$id])) {
+    $type = $_REQUEST['type'] ?? '';
+    $id   = (int)($_REQUEST['id'] ?? 0);
+    if ($type === 'menus' && !empty($_SESSION['cart']['menus'][$id])) {
+        $_SESSION['cart']['menus'][$id]['qty']--;
+        if ($_SESSION['cart']['menus'][$id]['qty'] <= 0) unset($_SESSION['cart']['menus'][$id]);
+    } elseif (!empty($_SESSION['cart'][$type][$id])) {
         $_SESSION['cart'][$type][$id]--;
-        if ($_SESSION['cart'][$type][$id] <= 0) {
-            unset($_SESSION['cart'][$type][$id]);
-        }
+        if ($_SESSION['cart'][$type][$id] <= 0) unset($_SESSION['cart'][$type][$id]);
     }
-    // C-2-b : AJAX ou full
-    if (isset($_GET['ajax'])) {
-        sendCartJson(['menus' => $mM, 'produits' => $pM, 'boissons' => $bM]);
-    }
-    header('Location: index.php?section=commande');
+    if (isset($_REQUEST['ajax'])) sendCartJson(['menus' => $mM, 'produits' => $pM, 'boissons' => $bM]);
+    header('Location:index.php?section=commande');
     exit;
 }
 
-/**
- * REPÈRE D-1 : Finalisation de la commande par le client
- */
+// -----------------------------------------------------------------------------
+// F) CLIENT: PASSE ET AFFICHAGE DES COMMANDES
+// -----------------------------------------------------------------------------
+// F-1: Checkout
 if ($role === 5 && $action === 'checkout' && $method === 'POST') {
-    // D-1-a : CSRF
-    if (!isset($_POST['csrf'], $_SESSION['csrf']) || $_POST['csrf'] !== $_SESSION['csrf']) {
-        exit('CSRF détecté');
-    }
-    // D-1-b : créer la commande
-    $dateCommande   = date('Y-m-d');
-    $ticket         = $cmdM->generateNextTicket($dateCommande);
-    $cmdM->add(
-        $dateCommande,
-        null,
-        'En attente',
-        $ticket,
-        $_SESSION['user']['user_id'],
-        null,
-        'sur_place'
-    );
+    if (!isset($_POST['csrf'], $_SESSION['csrf']) || $_POST['csrf'] !== $_SESSION['csrf']) exit('CSRF détecté');
+    $orderType = $_POST['order_type'] ?? 'sur_place';
+    if (!in_array($orderType, ['sur_place', 'a_emporter', 'livraison'], true)) $orderType = 'sur_place';
+    $date   = date('Y-m-d');
+    $ticket = $cmdM->generateNextTicket($date);
+    $cmdM->add($date, null, 'en_preparation', $ticket, $_SESSION['user']['user_id'], null, $orderType);
     $orderId = $cmdM->getLastInsertId();
-    // D-1-c : insérer les détails
-    $cmM = new CommandeMenu();
-    $cpM = new CommandeProduit();
-    $cbM = new CommandeBoisson();
-    foreach ($_SESSION['cart']['menus'] as $mid => $q) {
-        for ($i = 0; $i < $q; $i++) {
-            $cmM->add($orderId, $mid, 1, null);
-        }
-    }
-    foreach ($_SESSION['cart']['produits'] as $pid => $q) {
-        $cpM->add($orderId, $pid, $q);
-    }
-    foreach ($_SESSION['cart']['boissons'] as $bid => $q) {
-        $cbM->add($orderId, $bid, $q);
-    }
-    // D-1-d : vider le panier
+    foreach ($_SESSION['cart']['menus'] as $mid => $d) for ($i = 0; $i < (int)$d['qty']; $i++) $cmM->add($orderId, $mid, 1, (int)$d['boisson_id']);
+    foreach ($_SESSION['cart']['produits'] as $pid => $q) if (($q = (int)$q) > 0) $cpM->add($orderId, $pid, $q);
+    foreach ($_SESSION['cart']['boissons'] as $bid => $q)  if (($q = (int)$q) > 0) $cbM->add($orderId, $bid, $q);
     $_SESSION['cart'] = ['menus' => [], 'produits' => [], 'boissons' => []];
-    // D-1-e : rediriger vers liste client
-    header('Location: index.php?section=commande&action=listClient');
+    header('Location:index.php?section=commande&action=listClient');
     exit;
 }
-
-/**
- * REPÈRE D-2 : Affichage catalogue + panier initial (clients)
- */
-if ($role === 5 && !$action) {  // on affiche le catalogue seulement si aucune action particulière
-    // D-2-a : récupérer catalogue
+// F-2: Catalogue + panier
+if ($role === 5 && $action === '') {
     $menus    = $mM->getAll();
     $produits = $pM->getAll();
     $boissons = $bM->getAll();
+    $catMap   = [];
+    foreach ($cM->getAll() as $c) $catMap[$c['category_id']] = $c['category_nom'];
+    $produitsParCategorie = [];
+    foreach ($produits as $p) {
+        $cat = $catMap[$p['category_id']] ?? 'Autres';
+        $produitsParCategorie[$cat][] = $p;
+    }
+    $cartDetail = ['items' => [], 'total' => 0];
+    foreach (['menus', 'produits', 'boissons'] as $type) {
+        $model = $type === 'menus' ? $mM : ($type === 'produits' ? $pM : $bM);
+        foreach ($_SESSION['cart'][$type] ?? [] as $id => $d) {
+            if ($type === 'menus') {
+                $q = (int)$d['qty'];
+                $bid = $d['boisson_id'];
+            } else {
+                $q = (int)$d;
+                $bid = null;
+            }
+            $item = $model->get($id);
+            if (!$item) continue;
+            $pk = $type === 'menus' ? 'menu_prix' : ($type === 'produits' ? 'product_prix' : 'boisson_prix');
+            $nk = $type === 'menus' ? 'menu_nom' : ($type === 'produits' ? 'product_nom' : 'boisson_nom');
+            $price = (float)$item[$pk];
+            $st = $price * $q;
+            $entry = ['type' => $type, 'id' => $id, 'name' => $item[$nk], 'qty' => $q, 'price' => $price, 'subtotal' => $st];
+            if ($bid) {
+                $b = $bM->get($bid);
+                $entry['boisson_id'] = $bid;
+                $entry['boisson_name'] = $b['boisson_nom'] ?? '—';
+            }
+            $cartDetail['items'][] = $entry;
+            $cartDetail['total'] += $st;
+        }
+    }
+    require __DIR__ . '/../view/client_order.php';
+    exit;
+}
+// F-3: Détail
+if ($role === 5 && $action === 'view' && isset($_GET['id'])) {
+    $oid = (int)$_GET['id'];
+    if ($oid <= 0) {
+        http_response_code(400);
+        exit('ID invalide');
+    }
+    $cmd = $cmdM->get($oid);
+    if (!$cmd || $cmd['user_id'] !== $_SESSION['user']['user_id']) {
+        http_response_code(403);
+        exit('Pas autorisé');
+    }
+    $menusCmd = $cmM->getMenusByCommande($oid);
+    $prodsCmd = $cpM->getProduitsByCommande($oid);
+    $bevCmd = $cbM->getByCommande($oid);
+    require __DIR__ . '/../view/client_order_view.php';
+    exit;
+}
+// F-4: Liste client
+if ($role === 5 && $action === 'listClient') {
+    // Récupère toutes les commandes du client
+    $commandes = $cmdM->getAllByUser($_SESSION['user']['user_id']);
 
-    // D-2-b : regrouper produits par catégorie
+    // Exclut celles déjà « Servie » ou « Livrée »
+    $commandes = array_filter(
+        $commandes,
+        fn(array $c) => !in_array($c['order_statut_commande'], ['servie', 'livree'], true)
+    );
+
+    // On passe $commandes à la vue
+    require __DIR__ . '/../view/client_order_list.php';
+    exit;
+}
+
+// -----------------------------------------------------------------------------
+// G) BACK-OFFICE – CRÉATION, MODIFICATION, SUPPRESSION & MARQUAGE
+// -----------------------------------------------------------------------------
+
+// G-0: Affichage du formulaire de création (GET)
+if ($method === 'GET' && $action === 'add' && in_array($role, [1, 3], true)) {
+    // Charger les données pour le formulaire
+    $menus    = $mM->getAll();
+    // Regrouper produits par catégorie
     $catMap = [];
     foreach ($cM->getAll() as $c) {
         $catMap[$c['category_id']] = $c['category_nom'];
     }
     $produitsParCategorie = [];
-    foreach ($produits as $prod) {
+    foreach ($pM->getAll() as $prod) {
         $nom = $catMap[$prod['category_id']] ?? 'Autres';
         $produitsParCategorie[$nom][] = $prod;
     }
+    $boissons = $bM->getAll();
 
-    // D-2-c : préparer les détails du panier
-    $cartDetail = ['items' => [], 'total' => 0];
-    foreach (['menus', 'produits', 'boissons'] as $type) {
-        $model = $type === 'menus' ? $mM : ($type === 'produits' ? $pM : $bM);
-        foreach ($_SESSION['cart'][$type] ?? [] as $id => $q) {
-            $item = $model->get($id);
-            if (!$item) {
-                continue;
-            }
-            $pk = $type === 'menus'
-                ? 'menu_prix'
-                : ($type === 'produits' ? 'product_prix' : 'boisson_prix');
-            $nk = $type === 'menus'
-                ? 'menu_nom'
-                : ($type === 'produits' ? 'product_nom' : 'boisson_nom');
-            $pr = (float) $item[$pk];
-            $st = $pr * $q;
-            $cartDetail['items'][] = [
-                'type'     => $type,
-                'id'       => $id,
-                'name'     => $item[$nk],
-                'qty'      => $q,
-                'price'    => $pr,
-                'subtotal' => $st,
-            ];
-            $cartDetail['total'] += $st;
-        }
-    }
-
-    // D-2-d : afficher la vue catalogue + panier
-    require __DIR__ . '/../view/client_order.php';
+    require __DIR__ . '/../view/commande_add.php';
     exit;
 }
 
-/**
- * REPÈRE H-0 : Détail d'une commande pour le client
- */
-if ($role === 5 && $action === 'view' && isset($_GET['id'])) {
-    // H-0-a : sécuriser l’ID
-    $orderId = (int) $_GET['id'];
-    if ($orderId <= 0) {
-        http_response_code(400);
-        exit('ID invalide');
-    }
-
-    // H-0-b : Vérifier que la commande appartient bien à l’utilisateur
-    $cmd = $cmdM->get($orderId);
-    if (!$cmd || $cmd['user_id'] !== $_SESSION['user']['user_id']) {
-        http_response_code(403);
-        exit('Pas autorisé');
-    }
-
-    // H-0-c : Récupérer les détails (menus, produits, boissons)
-    $menusCommandes    = $cmM->getMenusByCommande($orderId);
-    $produitsCommandes = $cpM->getProduitsByCommande($orderId);
-    $boissonsCommandes = $cbM->getByCommande($orderId);
-
-    // H-0-d : Charger la vue de détail (client_order_view.php)
-    require __DIR__ . '/../view/client_order_view.php';
-    exit;
-}
-
-/**
- * REPÈRE H-1 : Liste des commandes du client
- */
-if ($role === 5 && $action === 'listClient') {
-    // H-1-a : Récupérer les commandes de l'utilisateur
-    $all = $cmdM->getAllByUser($_SESSION['user']['user_id']);
-    // H-1-b : Charger la vue de liste (client_order_list.php)
-    require __DIR__ . '/../view/client_order_list.php';
-    exit;
-}
-
-
-
-
-/**
- * REPÈRE F-1 : Back‑office – création de commande (admin/accueil)
- */
-if ($action === 'add' && $method === 'POST') {
-    // F-1-a : CSRF + droits
+// G-1: Création de la commande (POST)
+if ($method === 'POST' && $action === 'add') {
+    // CSRF + droits
     if (!isset($_POST['csrf'], $_SESSION['csrf']) || $_POST['csrf'] !== $_SESSION['csrf']) {
         exit('CSRF détecté');
     }
@@ -262,145 +259,78 @@ if ($action === 'add' && $method === 'POST') {
         http_response_code(403);
         exit('Pas autorisé');
     }
-    // F-1-b : insertion
-    $dateCommande   = $_POST['order_date_commande'] ?? '';
-    $heureLivraison = $_POST['order_heure_livraison'] ?: null;
-    $statut         = $_POST['order_statut_commande'] ?? '';
-    $userId         = (int)($_POST['user_id'] ?? 0);
-    $orderType      = $_POST['order_type'] ?? 'sur_place';
-    $ticket         = $cmdM->generateNextTicket($dateCommande);
-    $cmdM->add($dateCommande, $heureLivraison, $statut, $ticket, $userId, null, $orderType);
+
+    // Lecture des champs
+    $d   = $_POST['order_date_commande']        ?? '';
+    $h   = $_POST['order_heure_livraison']      ?: null;
+    $s   = $_POST['order_statut_commande']      ?? '';
+    $u   = (int)($_POST['user_id']              ?? 0);
+    $t   = $_POST['order_type']                 ?? 'sur_place';
+    $tic = $cmdM->generateNextTicket($d);
+
+    // Insertion
+    $cmdM->add($d, $h, $s, $tic, $u, null, $t);
+
     header('Location: index.php?section=commande');
     exit;
 }
 
-//
-// C) MODIFIER UNE COMMANDE
-//
-if ($action === 'edit') {
-    if ($method === 'POST') {
-        // CSRF + droits
-        if (!isset($_POST['csrf'], $_SESSION['csrf']) || $_POST['csrf'] !== $_SESSION['csrf']) {
-            exit('CSRF détecté');
-        }
-        if (!in_array($role, [1, 3], true)) {
-            http_response_code(403);
-            exit('Pas autorisé');
-        }
+// G-2: Affichage du formulaire de modification (GET)
+if ($method === 'GET' && $action === 'edit' && in_array($role, [1, 3], true)) {
+    $oid       = (int)($_GET['id'] ?? 0);
+    $commande  = $cmdM->get($oid);
 
-        // Lecture
-        $orderId        = (int)($_GET['id']               ?? 0);
-        $dateCommande   = $_POST['order_date_commande']  ?? '';
-        $heureLivraison = $_POST['order_heure_livraison'] ?: null;
-        $statut         = $_POST['order_statut_commande'] ?? '';
-        $userId         = (int)($_POST['user_id']         ?? 0);
-        $orderType      = $_POST['order_type']            ?? 'sur_place';
+    // a) Lignes existantes
+    $menusParCommande    = $cmM->getMenusByCommande($oid);
+    $produitsParCommande = $cpM->getProduitsByCommande($oid);
+    $boissonsUnite       = $cbM->getByCommande($oid);
 
-        // Conserver ticket
-        $ticket = $cmdM->get($orderId)['order_numero_ticket'] ?? '000';
-
-        // Mise à jour
-        $cmdM->update(
-            $orderId,
-            $dateCommande,
-            $heureLivraison,
-            $statut,
-            $ticket,
-            $userId,
-            null,
-            $orderType
-        );
-
-        // Supprimer anciennes liaisons
-        $cmM->deleteAllByCommande($orderId);
-        $cpM->deleteAllByCommande($orderId);
-        $cbM->deleteAllByCommande($orderId);
-
-        // Réinsertion (mêmes boucles qu'en add)
-        foreach ($_POST['menus'] ?? [] as $menuId => $qty) {
-            $qty = (int)$qty;
-            if ($qty < 1) continue;
-            $freeMap  = $_POST['menu_boissons'][$menuId] ?? [];
-            $inserted = 0;
-            foreach ($freeMap as $bId => $bQty) {
-                for ($i = 0; $i < (int)$bQty; $i++, $inserted++) {
-                    $cmM->add($orderId, $menuId, 1, $bId);
-                }
-            }
-            for (; $inserted < $qty; $inserted++) {
-                $cmM->add($orderId, $menuId, 1, null);
-            }
-        }
-        foreach ($_POST['produits'] ?? [] as $prodId => $pQty) {
-            $pQty = (int)$pQty;
-            if ($pQty > 0) {
-                $cpM->add($orderId, $prodId, $pQty);
-            }
-        }
-        foreach ($_POST['boissons_unite'] ?? [] as $bId => $bQty) {
-            $bQty = (int)$bQty;
-            if ($bQty > 0) {
-                $cbM->add($orderId, $bId, $bQty);
-            }
-        }
-
-        header('Location: index.php?section=commande');
-        exit;
-    }
-
-    // GET → formulaire d'édition
-    $orderId             = (int)($_GET['id'] ?? 0);
-    $commande            = $cmdM->get($orderId);
-    $menusParCommande    = $cmM->getMenusByCommande($orderId);
-    $produitsParCommande = $cpM->getProduitsByCommande($orderId);
-    $boissonsUnite       = $cbM->getByCommande($orderId);
-
-    // Listes complètes pour la vue
-    $menus               = $mM->getAll();
-    $produits            = $pM->getAll();    // ← indispensable !
-    $boissons            = $bM->getAll();    // ← indispensable !
-
-    // Quantités menus + boissons gratuites
+    // b) Préparer quantités menus + boissons offertes
     $menuQty = $menuFreeChoice = [];
     foreach ($menusParCommande as $row) {
-        $mid = $row['menu_id'];
+        $mid = (int)$row['menu_id'];
         $menuQty[$mid] = ($menuQty[$mid] ?? 0) + 1;
         if (!empty($row['menu_boisson_id'])) {
-            $bid = $row['menu_boisson_id'];
+            $bid = (int)$row['menu_boisson_id'];
             $menuFreeChoice[$mid][$bid] = ($menuFreeChoice[$mid][$bid] ?? 0) + 1;
         }
     }
 
-    // Quantités produits
+    // c) Préparer quantités produits
     $prodQty = [];
     foreach ($produitsParCommande as $row) {
-        $prodQty[$row['product_id']] = $row['order_product_quantite'];
+        $pid = (int)$row['product_id'];
+        $prodQty[$pid] = (int)$row['order_product_quantite'];
     }
 
-    // **Quantités boissons à l’unité** → clé correcte `order_boisson_quantite`
+    // d) Préparer quantités boissons à l’unité
     $boissonsUniteQty = [];
     foreach ($boissonsUnite as $row) {
-        $boissonsUniteQty[$row['boisson_id']] = $row['order_boisson_quantite'];
+        $bid = (int)$row['boisson_id'];
+        $boissonsUniteQty[$bid] = (int)$row['order_boisson_quantite'];
     }
 
-    // Produits regroupés par catégorie
-    $rawProduits = $pM->getAll();
+    // e) Charger les listes pour le formulaire
+    $menus    = $mM->getAll();
+    $boissons = $bM->getAll();
+    $catMap   = [];
+    foreach ($cM->getAll() as $c) {
+        $catMap[$c['category_id']] = $c['category_nom'];
+    }
     $produitsParCategorie = [];
-    foreach ($rawProduits as $prod) {
-        $cat = $prod['product_category'] ?? 'Autres';
-        $produitsParCategorie[$cat][] = $prod;
+    foreach ($pM->getAll() as $prod) {
+        $nom = $catMap[$prod['category_id']] ?? 'Autres';
+        $produitsParCategorie[$nom][] = $prod;
     }
 
-
+    // Affichage de la vue (avec toutes les variables calculées)
     require __DIR__ . '/../view/commande_edit.php';
     exit;
 }
 
-
-//
-// D) SUPPRESSION D’UNE COMMANDE
-//
-if ($action === 'delete' && $method === 'POST') {
+// G-4: Modification de la commande (POST)
+if ($method === 'POST' && $action === 'edit') {
+    // CSRF + droits
     if (!isset($_POST['csrf'], $_SESSION['csrf']) || $_POST['csrf'] !== $_SESSION['csrf']) {
         exit('CSRF détecté');
     }
@@ -408,79 +338,141 @@ if ($action === 'delete' && $method === 'POST') {
         http_response_code(403);
         exit('Pas autorisé');
     }
-    $orderId = (int)($_POST['id'] ?? 0);
-    $cmM->deleteAllByCommande($orderId);
-    $cpM->deleteAllByCommande($orderId);
-    $cbM->deleteAllByCommande($orderId);
-    $cmdM->delete($orderId);
+
+    $oid  = (int)($_GET['id'] ?? 0);
+    $d    = $_POST['order_date_commande']        ?? '';
+    $h    = $_POST['order_heure_livraison']      ?: null;
+    $s    = $_POST['order_statut_commande']      ?? '';
+    $u    = (int)($_POST['user_id']              ?? 0);
+    $t    = $_POST['order_type']                 ?? 'sur_place';
+    $tic  = $cmdM->get($oid)['order_numero_ticket'] ?? '000';
+
+    // Mise à jour de l’entête
+    $cmdM->update($oid, $d, $h, $s, $tic, $u, null, $t);
+
+    // Réinsertion des lignes
+    $cmM->deleteAllByCommande($oid);
+    $cpM->deleteAllByCommande($oid);
+    $cbM->deleteAllByCommande($oid);
+
+    foreach ($_POST['menus'] ?? [] as $m => $q) {
+        $q = (int)$q;
+        if ($q < 1) continue;
+        // Boissons gratuites par menu
+        $freeMap = $_POST['menu_boissons'][$m] ?? [];
+        for ($i = 0; $i < $q; $i++) {
+            foreach ($freeMap as $b => $bq) {
+                for ($j = 0; $j < (int)$bq; $j++) {
+                    $cmM->add($oid, $m, 1, $b);
+                }
+            }
+            // Si pas de boisson restante à associer
+            $cmM->add($oid, $m, 1, null);
+        }
+    }
+
+    foreach ($_POST['produits'] ?? [] as $p => $q) {
+        if (($n = (int)$q) > 0) {
+            $cpM->add($oid, $p, $n);
+        }
+    }
+
+    foreach ($_POST['boissons_unite'] ?? [] as $b => $q) {
+        if (($n = (int)$q) > 0) {
+            $cbM->add($oid, $b, $n);
+        }
+    }
+
     header('Location: index.php?section=commande');
     exit;
 }
 
-
-//
-// E) MARQUER COMME PRÊTE / EN LIVRAISON
-//
-if ($action === 'markReady' && $method === 'POST') {
+// G-5: Suppression de la commande (POST)
+if ($method === 'POST' && $action === 'delete') {
+    // CSRF + droits
     if (!isset($_POST['csrf'], $_SESSION['csrf']) || $_POST['csrf'] !== $_SESSION['csrf']) {
         exit('CSRF détecté');
     }
-    if ($role !== 2) {
+    if (!in_array($role, [1, 3], true)) {
         http_response_code(403);
         exit('Pas autorisé');
     }
-    $orderId = (int)($_POST['id'] ?? 0);
-    $cmd     = $cmdM->get($orderId);
-    if (!$cmd) {
+
+    $oid = (int)($_POST['id'] ?? 0);
+    $cmM->deleteAllByCommande($oid);
+    $cpM->deleteAllByCommande($oid);
+    $cbM->deleteAllByCommande($oid);
+    $cmdM->delete($oid);
+
+    header('Location: index.php?section=commande');
+    exit;
+}
+
+// G-6: Marquer un nouveau statut (POST)
+if ($method === 'POST' && $action === 'markReady') {
+    // CSRF
+    if (!isset($_POST['csrf'], $_SESSION['csrf']) || $_POST['csrf'] !== $_SESSION['csrf']) {
+        exit('CSRF détecté');
+    }
+
+    $oid = (int)($_POST['id'] ?? 0);
+    $c   = $cmdM->get($oid);
+    if (!$c) {
         http_response_code(404);
         exit('Commande introuvable');
     }
-    $newStatus = $cmd['order_type'] === 'a_emporter' ? 'En livraison' : 'Prête';
-    $cmdM->updateStatus($orderId, $newStatus);
+
+    // Calcul du nouveau statut selon le rôle
+    $cur = $c['order_statut_commande'];
+    $ot  = $c['order_type'];
+    $rid = $_SESSION['user']['role_id'];
+    $nx  = null;
+
+    if ($rid === 2 && $cur === 'en_preparation')                            $nx = 'pret';
+    elseif ($rid === 3 && $cur === 'pret' && in_array($ot, ['sur_place', 'a_emporter'], true)) $nx = 'servie';
+    elseif ($rid === 3 && $cur === 'pret' && $ot === 'livraison')          $nx = 'en_livraison';
+    elseif ($rid === 4 && $cur === 'en_livraison')                          $nx = 'livree';
+
+    if ($nx) {
+        $cmdM->updateStatus($oid, $nx);
+    }
+
     header('Location: index.php?section=commande');
     exit;
 }
 
 
-//
-// F) LISTE DES COMMANDES (par défaut)
-//
-$commandes                = $cmdM->getAll();
-$menusParCommande         = [];
-$produitsParCommande      = [];
+// -----------------------------------------------------------------------------
+// H) BACK-OFFICE: LISTE DES COMMANDES PAR RÔLE
+// -----------------------------------------------------------------------------
+$all = $cmdM->getAll();
+if ($role === 2)      $commandes = array_filter($all, fn($c) => $c['order_statut_commande'] === 'en_preparation');
+elseif ($role === 3)  $commandes = array_filter(
+    $all,
+    fn($c) => in_array(
+        $c['order_statut_commande'],
+        ['en_preparation', 'pret'],
+        true
+    )
+);
+elseif ($role === 4)  $commandes = array_filter($all, fn($c) => $c['order_statut_commande'] === 'en_livraison');
+else               $commandes = array_filter($all, fn($c) => !in_array($c['order_statut_commande'], ['servie', 'livree'], true));
+
+$menusParCommande = [];
+$produitsParCommande = [];
 $boissonsUniteParCommande = [];
-$boissonMap               = [];
-$boissonsParCommande      = [];
-
-// Préparer la map boisson pour la vue liste
-foreach ($bM->getAll() as $b) {
-    $boissonMap[$b['boisson_id']] = $b;
-}
-
+$boissonMap = [];
+$boissonsParCommande = [];
+foreach ($bM->getAll() as $b) $boissonMap[$b['boisson_id']] = $b;
 foreach ($commandes as $c) {
     $oid = $c['order_id'];
-
-    // Menus + boissons offertes
     $mrows = $cmM->getMenusByCommande($oid);
-    foreach ($mrows as &$r) {
-        $r['menu_nom'] = $mM->get($r['menu_id'])['menu_nom'];
-    }
+    foreach ($mrows as &$r) $r['menu_nom'] = $mM->get($r['menu_id'])['menu_nom'];
     $menusParCommande[$oid] = $mrows;
-
-    // Produits supplémentaires
     $prows = $cpM->getProduitsByCommande($oid);
-    foreach ($prows as &$r) {
-        $r['product_nom'] = $pM->get($r['product_id'])['product_nom'];
-    }
+    foreach ($prows as &$r) $r['product_nom'] = $pM->get($r['product_id'])['product_nom'];
     $produitsParCommande[$oid] = $prows;
-
-    // Boissons à l’unité
     $boissonsUniteParCommande[$oid] = $cbM->getByCommande($oid);
-
-    // Boisson « au choix »
-    $boissonsParCommande[$oid] = $c['boisson_id']
-        ? $bM->get($c['boisson_id'])
-        : null;
+    $boissonsParCommande[$oid] = $c['boisson_id'] ? $bM->get($c['boisson_id']) : null;
 }
-
 require __DIR__ . '/../view/commande_list.php';

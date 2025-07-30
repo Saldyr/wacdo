@@ -1,18 +1,17 @@
 <?php include __DIR__ . '/header.php'; ?>
+<?php $STATUT_LABELS = require __DIR__ . '/../config/statuses.php'; ?>
 
 <h1>Passer une commande</h1>
 <p><a href="index.php?section=commande">← Retour à la liste</a></p>
 
 <form method="post" action="index.php?section=commande&action=add">
     <!-- CSRF -->
-    <input type="hidden" name="csrf"
-        value="<?= htmlspecialchars($_SESSION['csrf'] ?? '', ENT_QUOTES) ?>">
+    <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf'] ?? '', ENT_QUOTES) ?>">
 
     <!-- Date de commande -->
     <div>
-        <label for="order_date_commande">Date de commande :</label><br>
-        <input
-            type="date"
+        <label for="order_date_commande">Date de commande :</label><br>
+        <input type="date"
             id="order_date_commande"
             name="order_date_commande"
             required
@@ -21,20 +20,16 @@
 
     <!-- Heure de livraison (optionnelle) -->
     <div style="margin-top:1em;">
-        <label for="order_heure_livraison">Heure de livraison :</label><br>
-        <input
-            type="time"
-            id="order_heure_livraison"
-            name="order_heure_livraison">
+        <label for="order_heure_livraison">Heure de livraison :</label><br>
+        <input type="time" id="order_heure_livraison" name="order_heure_livraison">
     </div>
 
     <!-- Type de commande -->
     <div style="margin-top:1em;">
-        <label>Type de commande :</label><br>
+        <label>Type de commande :</label><br>
         <?php foreach (['sur_place' => 'Sur place', 'a_emporter' => 'À emporter', 'livraison' => 'Livraison'] as $val => $label): ?>
             <label style="margin-right:1em;">
-                <input
-                    type="radio"
+                <input type="radio"
                     name="order_type"
                     value="<?= $val ?>"
                     <?= $val === 'sur_place' ? 'checked' : '' ?>>
@@ -45,21 +40,26 @@
 
     <!-- Statut lié au type -->
     <div style="margin-top:1em;">
-        <label for="order_statut_commande">Statut :</label><br>
+        <label for="order_statut_commande">Statut :</label><br>
         <select id="order_statut_commande" name="order_statut_commande" required>
-            <optgroup label="Sur place" data-type="sur_place">
-                <option value="en_preparation">En cours de préparation</option>
-                <option value="pret">Commande prête</option>
-            </optgroup>
-            <optgroup label="À emporter" data-type="a_emporter" style="display:none">
-                <option value="en_preparation">En cours de préparation</option>
-                <option value="pret">Commande prête</option>
-            </optgroup>
-            <optgroup label="Livraison" data-type="livraison" style="display:none">
-                <option value="en_preparation">En cours de préparation</option>
-                <option value="en_livraison">En livraison</option>
-                <option value="livree">Livrée</option>
-            </optgroup>
+            <?php foreach ($STATUT_LABELS as $code => $libelle):
+                // quels statuts proposer en création ?
+                $allowed = match ($code) {
+                    'en_preparation', 'pret' => true,
+                    'en_livraison'           => ($_POST['order_type'] ?? 'sur_place') === 'livraison',
+                    default                  => false,
+                };
+                if (!$allowed) continue;
+                // data-type pour JS
+                $dt = in_array($code, ['en_preparation', 'pret'], true) ? 'all'
+                    : 'livraison';
+            ?>
+                <option data-type="<?= $dt ?>"
+                    value="<?= $code ?>"
+                    <?= (($_POST['order_statut_commande'] ?? '') === $code) ? 'selected' : '' ?>>
+                    <?= htmlspecialchars($libelle, ENT_QUOTES) ?>
+                </option>
+            <?php endforeach; ?>
         </select>
     </div>
 
@@ -167,19 +167,26 @@
 <script>
     (function() {
         const statusSelect = document.getElementById('order_statut_commande');
-        document.querySelectorAll('input[name="order_type"]').forEach(radio => {
-            radio.addEventListener('change', () => {
-                const t = radio.value;
-                statusSelect.querySelectorAll('optgroup').forEach(og => {
-                    og.style.display = og.dataset.type === t ? '' : 'none';
-                });
-                statusSelect.querySelector(`optgroup[data-type="${t}"] option`).selected = true;
+        const radios = document.querySelectorAll('input[name="order_type"]');
+
+        function filterOptions() {
+            const type = document.querySelector('input[name="order_type"]:checked').value;
+            const wanted = (type === 'livraison') ? 'livraison' : 'all';
+            [...statusSelect.options].forEach(opt => {
+                // on affiche toujours les data-type="all"
+                opt.hidden = (opt.dataset.type !== 'all' && opt.dataset.type !== wanted);
             });
-        });
-        window.addEventListener('DOMContentLoaded', () => {
-            document.querySelector('input[name="order_type"]:checked')
-                .dispatchEvent(new Event('change'));
-        });
+            // coche la première visible
+            for (const o of statusSelect.options) {
+                if (!o.hidden) {
+                    o.selected = true;
+                    break;
+                }
+            }
+        }
+
+        radios.forEach(r => r.addEventListener('change', filterOptions));
+        window.addEventListener('DOMContentLoaded', filterOptions);
     })();
 </script>
 

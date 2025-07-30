@@ -21,9 +21,11 @@
 
     <label>Rôle:<br>
         <select name="role">
-            <option value="1" <?= $user['role_id'] == 1 ? 'selected' : '' ?>>Admin</option>
-            <option value="2" <?= $user['role_id'] == 2 ? 'selected' : '' ?>>Préparation</option>
+            <option value="1" <?= $user['role_id'] == 1 ? 'selected' : '' ?>>Administrateur</option>
+            <option value="2" <?= $user['role_id'] == 2 ? 'selected' : '' ?>>Préparateur</option>
             <option value="3" <?= $user['role_id'] == 3 ? 'selected' : '' ?>>Accueil</option>
+            <option value="4" <?= $user['role_id'] == 4 ? 'selected' : '' ?>>Livreur</option>
+            <option value="5" <?= $user['role_id'] == 5 ? 'selected' : '' ?>>Client</option>
         </select>
     </label><br><br>
 
