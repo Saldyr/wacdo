@@ -18,7 +18,7 @@ $boissonsCommandes = $bevCmd      ?? [];
 <?php $STATUT_LABELS = require __DIR__ . '/../config/statuses.php'; ?>
 
 
-<h1>Détail de la commande « <?= htmlspecialchars($cmd['order_numero_ticket'], ENT_QUOTES) ?> »</h1>
+<h1>Détail de la commande « <?= htmlspecialchars($cmd['order_numero_ticket'], ENT_QUOTES) ?> »</h1>
 
 <ul>
     <li><strong>Date :</strong> <?= htmlspecialchars($cmd['order_date_commande'], ENT_QUOTES) ?></li>
@@ -55,7 +55,7 @@ $boissonsCommandes = $bevCmd      ?? [];
                 <?php if (!empty($mc['menu_boisson_id'])):
                     $off = $bM->get($mc['menu_boisson_id']);
                 ?>
-                    – Boisson offerte : <?= htmlspecialchars($off['boisson_nom'], ENT_QUOTES) ?>
+                    Boisson offerte : <?= htmlspecialchars($off['boisson_nom'], ENT_QUOTES) ?>
                 <?php endif; ?>
             </li>
         <?php endforeach; ?>
@@ -74,14 +74,14 @@ $boissonsCommandes = $bevCmd      ?? [];
             $prodNom = htmlspecialchars($prod['product_nom'], ENT_QUOTES);
             $qte     = (int)$pc['order_product_quantite'];
         ?>
-            <li><?= $prodNom ?> × <?= $qte ?></li>
+            <li><?= $prodNom ?> x <?= $qte ?></li>
         <?php endforeach; ?>
     </ul>
 <?php endif; ?>
 
-<h2>Boissons à l’unité</h2>
+<h2>Boissons à l'unité</h2>
 <?php if (empty($boissonsCommandes)): ?>
-    <p>Aucune boisson à l’unité.</p>
+    <p>Aucune boisson à l'unité.</p>
 <?php else: ?>
     <ul>
         <?php foreach ($boissonsCommandes as $bc):
@@ -90,13 +90,13 @@ $boissonsCommandes = $bevCmd      ?? [];
             $bevNom = htmlspecialchars($bev['boisson_nom'], ENT_QUOTES);
             $qte    = (int)$bc['order_boisson_quantite'];
         ?>
-            <li><?= $bevNom ?> × <?= $qte ?></li>
+            <li><?= $bevNom ?> x <?= $qte ?></li>
         <?php endforeach; ?>
     </ul>
 <?php endif; ?>
 
 <p style="margin-top:2em;">
-    <a href="index.php?section=commande&action=listClient">Retour à mes commandes</a>
+    <a href="index.php?section=commande&action=listClient">← Retour à mes commandes</a>
 </p>
 
 <?php include __DIR__ . '/footer.php'; ?>

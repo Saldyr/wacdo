@@ -75,6 +75,13 @@ $section = $_GET['section']         ?? '';
                 </a>
             <?php endif; ?>
         <?php endif; ?>
+        <?php
+        $role = $_SESSION['user']['role_id'] ?? null;
+        if (in_array($role, [1, 2, 3], true)): ?>
+            <a href="index.php?section=commande&action=history">Historique</a>
+        <?php elseif ($role === 4): ?>
+            <a href="index.php?section=commande&action=history">Mes livraisons</a>
+        <?php endif; ?>
 
         <?php if ($role !== null): // Tout utilisateur connecté 
         ?>

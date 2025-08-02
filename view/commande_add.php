@@ -83,7 +83,7 @@
             <div style="margin-bottom:1em;">
                 <label style="display:inline-block; width:300px;">
                     <?= htmlspecialchars($menu['menu_nom'], ENT_QUOTES) ?> —
-                    <?= number_format($menu['menu_prix'], 2) ?> €
+                    <?= number_format($menu['menu_prix'], 2) ?> €
                     <input
                         type="number"
                         name="menus[<?= $mid ?>]"
@@ -145,7 +145,7 @@
             <div style="margin-bottom:0.5em;">
                 <label>
                     <?= htmlspecialchars($b['boisson_nom'], ENT_QUOTES) ?> —
-                    <?= number_format($b['boisson_prix'], 2) ?> €
+                    <?= number_format($b['boisson_prix'], 2) ?> €
                     <input
                         type="number"
                         name="boissons_unite[<?= $bid ?>]"

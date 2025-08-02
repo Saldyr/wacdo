@@ -27,7 +27,7 @@
             <form method="post" action="index.php?section=menu&action=delete" style="display:inline">
                 <input type="hidden" name="id" value="<?= (int)$menu['menu_id'] ?>">
                 <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?>">
-                <button type="submit" onclick="return confirm('Supprimer ce menu ?')">Supprimer</button>
+                <button type="submit" onclick="return confirm('Supprimer ce menu ?')">Supprimer</button>
             </form>
             </p>
         </li>

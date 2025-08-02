@@ -57,7 +57,7 @@
                         <input type="hidden" name="id" value="<?= $u['user_id'] ?>">
                         <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?>">
                         <button type="submit"
-                            onclick="return confirm('Supprimer cet utilisateur ?')">
+                            onclick="return confirm('Supprimer cet utilisateur ?')">
                             🗑️
                         </button>
                     </form>

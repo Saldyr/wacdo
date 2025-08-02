@@ -16,9 +16,9 @@
     </label><br><br>
 
     <label>Description:<br>
-        <textarea name="menu_description" rows="3"><?=
-                                                    htmlspecialchars($menu['menu_description'], ENT_QUOTES)
-                                                    ?></textarea>
+        <textarea name="menu_description" rows="3">
+            <?=htmlspecialchars($menu['menu_description'], ENT_QUOTES)?>
+        </textarea>
     </label><br><br>
 
     <label>Prix:<br>
@@ -30,7 +30,7 @@
             value="<?= htmlspecialchars($menu['menu_prix'], ENT_QUOTES) ?>">
     </label><br><br>
 
-    <label>URL de l’image:<br>
+    <label>URL de l'image:<br>
         <input
             type="url"
             name="menu_image_url"

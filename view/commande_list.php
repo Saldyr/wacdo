@@ -68,7 +68,7 @@
                     <p><em>Aucun produit.</em></p>
                 <?php endif; ?>
 
-                <em>Boissons à l’unité :</em>
+                <em>Boissons à l'unité :</em>
                 <?php if (!empty($boissonsUniteParCommande[$oid])): ?>
                     <ul>
                         <?php foreach ($boissonsUniteParCommande[$oid] as $brow):

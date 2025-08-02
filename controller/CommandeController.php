@@ -249,7 +249,64 @@ if ($role === 4 && $action === 'prendre' && $method === 'POST') {
 // H) BACK-OFFICE – CRÉATION, MODIFICATION, SUPPRESSION & MARQUAGE
 // -----------------------------------------------------------------------------
 
-// H-0: Affichage du formulaire de création (GET)
+// H-0: Détail d'une commande (GET)
+if ($method === 'GET' && $action === 'view' && in_array($role, [1, 2, 3, 4], true)) {
+    $oid = (int)($_GET['id'] ?? 0);
+    if ($oid <= 0) {
+        http_response_code(400);
+        exit('ID invalide');
+    }
+    // Récupère la commande et ses lignes
+    $cmd       = $cmdM->get($oid);
+    $menusParCommande    = $cmM->getMenusByCommande($oid);
+    $produitsParCommande = $cpM->getProduitsByCommande($oid);
+    $boissonsUniteParCommande = $cbM->getByCommande($oid);
+
+    // Charge la vue back-office (à créer ci-dessous)
+    require __DIR__ . '/../view/commande_view.php';
+    exit;
+}
+
+// H-1: Historique des commandes
+// Récupération des dates de filtre
+if ($method === 'GET' && $action === 'history') {
+    // Récupération des dates de filtre
+    $from = $_GET['from'] ?? '';
+    $to   = $_GET['to']   ?? '';
+
+    // Validation rapide (YYYY-MM-DD)
+    $validFrom = preg_match('/^\d{4}-\d{2}-\d{2}$/', $from) ? $from : null;
+    $validTo   = preg_match('/^\d{4}-\d{2}-\d{2}$/', $to)   ? $to   : null;
+
+    // Chargement brut des commandes
+    if (in_array($role, [1, 2, 3], true)) {
+        $all = $cmdM->getAll();
+    }
+    // Historique personnel pour le livreur
+    elseif ($role === 4) {
+        $all = $cmdM->getAll();
+        $uid = $_SESSION['user']['user_id'];
+        $all = array_filter($all, fn($c) => (int)$c['livreur_id'] === $uid);
+    }
+    // Autres rôles non autorisés
+    else {
+        http_response_code(403);
+        exit('Pas autorisé');
+    }
+
+    // Filtrer par order_date_commande
+    $commandes = array_filter($all, function ($c) use ($validFrom, $validTo) {
+        $d = $c['order_date_commande'];
+        if ($validFrom && $d < $validFrom) return false;
+        if ($validTo   && $d > $validTo)   return false;
+        return true;
+    });
+
+    require __DIR__ . '/../view/commande_history.php';
+    exit;
+}
+
+// H-2: Affichage du formulaire de création (GET)
 if ($method === 'GET' && $action === 'add' && in_array($role, [1, 3], true)) {
     // Charger les données pour le formulaire
     $menus    = $mM->getAll();
@@ -269,7 +326,7 @@ if ($method === 'GET' && $action === 'add' && in_array($role, [1, 3], true)) {
     exit;
 }
 
-// H-1: Création de la commande (POST)
+// H-3: Création de la commande (POST)
 if ($method === 'POST' && $action === 'add') {
     // CSRF + droits
     if (!isset($_POST['csrf'], $_SESSION['csrf']) || $_POST['csrf'] !== $_SESSION['csrf']) {
@@ -295,7 +352,7 @@ if ($method === 'POST' && $action === 'add') {
     exit;
 }
 
-// H-2: Affichage du formulaire de modification (GET)
+// H-4: Affichage du formulaire de modification (GET)
 if ($method === 'GET' && $action === 'edit' && in_array($role, [1, 3], true)) {
     $oid       = (int)($_GET['id'] ?? 0);
     $commande  = $cmdM->get($oid);
@@ -348,7 +405,7 @@ if ($method === 'GET' && $action === 'edit' && in_array($role, [1, 3], true)) {
     exit;
 }
 
-// H-4: Modification de la commande (POST)
+// H-5: Modification de la commande (POST)
 if ($method === 'POST' && $action === 'edit') {
     // CSRF + droits
     if (!isset($_POST['csrf'], $_SESSION['csrf']) || $_POST['csrf'] !== $_SESSION['csrf']) {
@@ -417,7 +474,7 @@ if ($method === 'POST' && $action === 'edit') {
     exit;
 }
 
-// H-5: Suppression de la commande (POST)
+// H-6: Suppression de la commande (POST)
 if ($method === 'POST' && $action === 'delete') {
     // CSRF + droits
     if (!isset($_POST['csrf'], $_SESSION['csrf']) || $_POST['csrf'] !== $_SESSION['csrf']) {
@@ -438,7 +495,7 @@ if ($method === 'POST' && $action === 'delete') {
     exit;
 }
 
-// H-6: Marquer un nouveau statut (POST)
+// H-7: Marquer un nouveau statut (POST)
 if ($method === 'POST' && $action === 'markReady') {
     // CSRF
     if (!isset($_POST['csrf'], $_SESSION['csrf']) || $_POST['csrf'] !== $_SESSION['csrf']) {

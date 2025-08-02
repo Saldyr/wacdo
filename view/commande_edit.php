@@ -14,7 +14,7 @@
 
     <!-- Date de commande -->
     <div>
-        <label for="order_date_commande">Date de commande :</label><br>
+        <label for="order_date_commande">Date de commande :</label><br>
         <input type="date"
             id="order_date_commande"
             name="order_date_commande"
@@ -24,7 +24,7 @@
 
     <!-- Heure de livraison -->
     <div style="margin-top:1em;">
-        <label for="order_heure_livraison">Heure de livraison :</label><br>
+        <label for="order_heure_livraison">Heure de livraison :</label><br>
         <input type="time"
             id="order_heure_livraison"
             name="order_heure_livraison"
@@ -33,7 +33,7 @@
 
     <!-- Type de commande -->
     <div style="margin-top:1em;">
-        <label>Type de commande :</label><br>
+        <label>Type de commande :</label><br>
         <?php foreach (['sur_place' => 'Sur place', 'a_emporter' => 'À emporter', 'livraison' => 'Livraison'] as $val => $label): ?>
             <label style="margin-right:1em;">
                 <input type="radio"
@@ -77,7 +77,7 @@
 
     <!-- Utilisateur (non modifiable) -->
     <div style="margin-top:1em;">
-        <label>Utilisateur :</label><br>
+        <label>Utilisateur :</label><br>
         <input type="hidden" name="user_id"
             value="<?= (int)$commande['user_id'] ?>">
         <span>#<?= (int)$commande['user_id'] ?> —
@@ -95,7 +95,7 @@
             <div style="margin-bottom:1em;">
                 <label style="display:inline-block; width:300px;">
                     <?= htmlspecialchars($menu['menu_nom'], ENT_QUOTES) ?> —
-                    <?= number_format($menu['menu_prix'], 2) ?> €
+                    <?= number_format($menu['menu_prix'], 2) ?> €
                     <input type="number"
                         name="menus[<?= $mid ?>]"
                         min="0"
@@ -103,7 +103,7 @@
                         style="width:60px; margin-left:10px;">
                 </label>
                 <div style="margin-left:320px; margin-top:0.5em;">
-                    <strong>Boissons gratuites :</strong><br>
+                    <strong>Boissons gratuites :</strong><br>
                     <?php foreach ($boissons as $b):
                         $bid  = (int)$b['boisson_id'];
                         $fQty = $free[$bid] ?? 0;
@@ -136,7 +136,7 @@
                     <div style="margin-bottom:0.5em;">
                         <label>
                             <?= htmlspecialchars($prod['product_nom'], ENT_QUOTES) ?> —
-                            <?= number_format($prod['product_prix'], 2) ?> €
+                            <?= number_format($prod['product_prix'], 2) ?> €
                             <input
                                 type="number"
                                 name="produits[<?= $pid ?>]"
@@ -161,7 +161,7 @@
             <div style="margin-bottom:0.5em;">
                 <label>
                     <?= htmlspecialchars($b['boisson_nom'], ENT_QUOTES) ?> —
-                    <?= number_format($b['boisson_prix'], 2) ?> €
+                    <?= number_format($b['boisson_prix'], 2) ?> €
                     <input type="number"
                         name="boissons_unite[<?= $bid ?>]"
                         min="0"

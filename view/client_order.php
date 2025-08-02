@@ -61,13 +61,13 @@
                                 <small>Boisson offerte : <?= htmlspecialchars($i['boisson_name'], ENT_QUOTES) ?></small>
                             <?php endif; ?>
                             <br>
-                            — Qté : <?= $i['qty'] ?> × <?= number_format($i['price'], 2, ',', ' ') ?> €
+                            — Qté : <?= $i['qty'] ?> x <?= number_format($i['price'], 2, ',', ' ') ?> €
                             = <?= number_format($i['subtotal'], 2, ',', ' ') ?> €
                             <button
                                 data-action="removeCart"
                                 data-type="<?= htmlspecialchars($i['type'], ENT_QUOTES) ?>"
                                 data-id="<?= (int)$i['id'] ?>">
-                                [–]
+                                [-]
                             </button>
                             <button
                                 data-action="addCart"
@@ -190,7 +190,7 @@
                 if (i.boisson_name) {
                     html += `<br><small>Boisson offerte : ${i.boisson_name}</small>`;
                 }
-                html += `<br>— Qté : ${i.qty} × ${parseFloat(i.price).toFixed(2)} € 
+                html += `<br>— Qté : ${i.qty} x ${parseFloat(i.price).toFixed(2)} € 
                         = ${parseFloat(i.subtotal).toFixed(2)} €
                         <button data-action="removeCart" data-type="${i.type}" data-id="${i.id}">[–]</button>
                         <button data-action="addCart"    data-type="${i.type}" data-id="${i.id}">[+]</button>

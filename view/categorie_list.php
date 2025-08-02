@@ -31,6 +31,6 @@
     <?php endif; ?>
 </ul>
 
-<p><a href="index.php?section=produit">Retour à l'accueil</a></p>
+<p><a href="index.php?section=produit">← Retour à l'accueil</a></p>
 
 <?php include __DIR__ . '/footer.php'; ?>

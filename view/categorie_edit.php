@@ -1,7 +1,7 @@
 <?php include __DIR__ . '/header.php'; ?>
 
 <h1>Modifier une catégorie</h1>
-<p><a href="index.php?section=categorie">Retour à la liste</a></p>
+<p><a href="index.php?section=categorie">← Retour à la liste</a></p>
 
 <form 
     method="post" 

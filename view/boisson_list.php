@@ -25,13 +25,13 @@
                     <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?>">
                     <button
                         type="submit"
-                        onclick="return confirm('Supprimer cette boisson ?')">Supprimer</button>
+                        onclick="return confirm('Supprimer cette boisson ?')">Supprimer</button>
                 </form>
             </li>
         <?php endforeach; ?>
     </ul>
 <?php endif; ?>
 
-<p><a href="index.php">Retour à l'accueil</a></p>
+<p><a href="index.php">← Retour à l'accueil</a></p>
 
 <?php include __DIR__ . '/footer.php'; ?>

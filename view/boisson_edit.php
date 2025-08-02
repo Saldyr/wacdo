@@ -1,7 +1,7 @@
 <?php require __DIR__ . '/header.php'; ?>
 
 <h1>Modifier une boisson</h1>
-<p><a href="index.php?section=boisson">Retour à la liste</a></p>
+<p><a href="index.php?section=boisson">← Retour à la liste</a></p>
 
 <form 
     method="post" 
