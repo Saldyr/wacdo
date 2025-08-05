@@ -29,7 +29,7 @@ class CommandeBoisson extends Model
     {
         $sql = "
             SELECT
-            id,
+            commande_boisson_id,
             order_id,
             boisson_id,
             quantity       AS order_boisson_quantite

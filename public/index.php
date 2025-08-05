@@ -1,4 +1,7 @@
 <?php
+//0) Charger la classe Database
+require_once __DIR__ . '/../lib/Database.php';
+
 session_start();
 
 // 1) Pages publiques : login/auth et inscription
