@@ -205,7 +205,7 @@ if ($role === 5 && $action === 'view' && isset($_GET['id'])) {
     }
     $menusCmd = $cmM->getMenusByCommande($oid);
     $prodsCmd = $cpM->getProduitsByCommande($oid);
-    $bevCmd = $cbM->getByCommande($oid);
+    $bevCmd = $cbM->getBoissonsByCommande($oid);
     require __DIR__ . '/../view/client_order_view.php';
     exit;
 }
@@ -260,7 +260,7 @@ if ($method === 'GET' && $action === 'view' && in_array($role, [1, 2, 3, 4], tru
     $cmd       = $cmdM->get($oid);
     $menusParCommande    = $cmM->getMenusByCommande($oid);
     $produitsParCommande = $cpM->getProduitsByCommande($oid);
-    $boissonsUniteParCommande = $cbM->getByCommande($oid);
+    $boissonsUniteParCommande = $cbM->getBoissonsByCommande($oid);
 
     // Charge la vue back-office (à créer ci-dessous)
     require __DIR__ . '/../view/commande_view.php';
@@ -360,7 +360,7 @@ if ($method === 'GET' && $action === 'edit' && in_array($role, [1, 3], true)) {
     // a) Lignes existantes
     $menusParCommande    = $cmM->getMenusByCommande($oid);
     $produitsParCommande = $cpM->getProduitsByCommande($oid);
-    $boissonsUnite       = $cbM->getByCommande($oid);
+    $boissonsUnite       = $cbM->getBoissonsByCommande($oid);
 
     // b) Préparer quantités menus + boissons offertes
     $menuQty = $menuFreeChoice = [];
@@ -567,7 +567,7 @@ foreach ($commandes as $c) {
     $prows = $cpM->getProduitsByCommande($oid);
     foreach ($prows as &$r) $r['product_nom'] = $pM->get($r['product_id'])['product_nom'];
     $produitsParCommande[$oid] = $prows;
-    $boissonsUniteParCommande[$oid] = $cbM->getByCommande($oid);
+    $boissonsUniteParCommande[$oid] = $cbM->getBoissonsByCommande($oid);
     $boissonsParCommande[$oid] = $c['boisson_id'] ? $bM->get($c['boisson_id']) : null;
 }
 require __DIR__ . '/../view/commande_list.php';

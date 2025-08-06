@@ -4,6 +4,9 @@ require_once __DIR__ . '/../lib/Database.php';
 
 session_start();
 
+$section = $_GET['section'] ?? null;
+$action  = $_GET['action']  ?? null;
+
 // 1) Pages publiques : login/auth et inscription
 $section = $_GET['section'] ?? null;
 
@@ -54,5 +57,9 @@ switch ($section) {
     case 'produit':
     default:
         require __DIR__ . '/../controller/ProduitController.php';
+        break;
+
+    case 'profile':
+        require __DIR__ . '/../controller/UtilisateurController.php';
         break;
 }

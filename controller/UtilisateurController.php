@@ -1,6 +1,68 @@
 <?php
 // controller/UtilisateurController.php
 
+$section = $_GET['section'] ?? '';
+$action  = $_GET['action']  ?? '';
+
+if ($section === 'profile') {
+    require_once __DIR__ . '/../model/Utilisateur.php';
+    $uModel = new Utilisateur();
+
+    // Récupère l’ID et le rôle dans la session
+    $userId = $_SESSION['user']['user_id']     ?? null;
+    $role   = $_SESSION['user']['role_id']     ?? null;
+    if ($userId === null || $role !== 5) {
+        header('HTTP/1.1 403 Forbidden');
+        exit('Accès interdit pour votre rôle.');
+    }
+
+    // Dispatcher selon l’action
+    switch ($action) {
+        case 'export':
+            header('Content-Type: application/json');
+            header('Content-Disposition: attachment; filename="mes_donnees.json"');
+            echo json_encode($uModel->get($userId), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+            exit;
+
+        case 'update':
+            $prenom = trim($_POST['prenom'] ?? '');
+            $nom    = trim($_POST['nom']    ?? '');
+            $email  = filter_var(trim($_POST['email']), FILTER_VALIDATE_EMAIL);
+            $uModel->update($userId, $prenom, $nom, $email, $role);
+            header('Location: index.php?section=profile&updated=1');
+            exit;
+
+        case 'delete':
+            $pwdConfirm = $_POST['pwd_confirm'] ?? '';
+            $record     = $uModel->get($userId);
+            if (password_verify($pwdConfirm, $record['user_password'])) {
+                // anonymisation
+                $anonEmail = 'user+' . $userId . '@anonymise.local';
+                $uModel->update($userId, 'Anonyme', 'Anonyme', $anonEmail, $role);
+                // reset consentement
+                $uModel
+                    ->setConsentement(false)
+                    ->setDateConsentement(null)
+                    ->setIsActive(false)
+                    ->saveStatus($userId);
+                session_destroy();
+                header('Location: index.php?section=auth&deleted=1');
+                exit;
+            } else {
+                $_SESSION['error'] = 'Mot de passe incorrect.';
+                header('Location: index.php?section=profile');
+                exit;
+            }
+
+        case '':
+        default:
+            // Affichage du profil
+            $user = $uModel->get($userId);
+            require __DIR__ . '/../view/utilisateur_profile.php';
+            exit;
+    }
+}
+
 require_once __DIR__ . '/../lib/Auth.php';
 // Seul le rôle Admin (1) peut gérer les utilisateurs
 Auth::check([1]);
@@ -44,7 +106,7 @@ if (($_GET['action'] ?? null) === 'add') {
 
         // 1b‑2) Hasher le mot de passe et insérer
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-        $uModel->add($prenom, $nom, $email, $passwordHash, $role);
+        $uModel->add($prenom, $nom, $email, $passwordHash, $role, false, null);
 
         // Redirection vers la liste
         header('Location: index.php?section=utilisateur');
@@ -79,7 +141,7 @@ if (($_GET['action'] ?? null) === 'edit' && isset($_GET['id'])) {
         $existing = $uModel->findByEmail($email);
         if ($existing && (int)$existing['user_id'] !== $id) {
             $error = 'Cet email est déjà utilisé par un autre compte.';
-            $user = ['user_id'=>$id,'user_prenom'=>$prenom,'user_nom'=>$nom,'user_mail'=>$email,'role_id'=>$role];
+            $user = ['user_id' => $id, 'user_prenom' => $prenom, 'user_nom' => $nom, 'user_mail' => $email, 'role_id' => $role];
             require __DIR__ . '/../view/utilisateur_edit.php';
             exit;
         }

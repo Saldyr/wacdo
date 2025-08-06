@@ -1,5 +1,16 @@
 <?php include __DIR__ . '/header.php'; ?>
 
+<style>
+    .flash-success {
+        color: #2a7f2a;
+    }
+</style>
+<?php if (!empty($_GET['registered'])): ?>
+    <p style="color:green;">
+        🎉 Votre compte a été créé avec succès. Vous pouvez maintenant vous connecter.
+    </p>
+<?php endif; ?>
+
 <h1>Se connecter</h1>
 
 <?php if (!empty($error)): ?>
@@ -55,6 +66,18 @@
         <label for="register_confirm_password">Confirmer le mot de passe :</label><br>
         <input type="password" id="register_confirm_password" name="register_confirm_password" required autocomplete="new-password">
     </div>
+    <div class="form-group">
+        <label for="register_consentement">
+            <input
+                type="checkbox"
+                id="register_consentement"
+                name="register_consentement"
+                value="1"
+                required>
+            J'accepte la <a href="/docs/RGPD.md" target="_blank">politique de confidentialité</a>.
+        </label>
+    </div>
+
     <p>
         <button type="submit">Inscription</button>
     </p>

@@ -25,7 +25,7 @@ class CommandeBoisson extends Model
      * On alias la colonne quantity en order_boisson_quantite
      * pour matcher le code de ton controller/vue.
      */
-    public function getByCommande(int $orderId): array
+    public function getBoissonsByCommande(int $orderId): array
     {
         $sql = "
             SELECT

@@ -16,8 +16,9 @@ if (($_GET['action'] ?? null) === 'add' && $_SERVER['REQUEST_METHOD'] === 'POST'
     $nom   = trim($_POST['boisson_nom'] ?? '');
     $prix  = (float)($_POST['boisson_prix'] ?? 0);
     $dispo = isset($_POST['boisson_disponibilite']) ? 1 : 0;
-
-    $boissonModel->add($nom, $prix, $dispo);
+    $description = trim($_POST['boisson_description'] ?? '');
+    $image_url   = trim($_POST['boisson_image_url'] ?? '');
+    $boissonModel->add($nom, $description, $prix, $image_url, $dispo);
     header('Location: index.php?section=boisson');
     exit;
 }
@@ -47,8 +48,9 @@ if (($_GET['action'] ?? null) === 'edit' && isset($_GET['id'])) {
         $nom   = trim($_POST['boisson_nom'] ?? '');
         $prix  = (float)($_POST['boisson_prix'] ?? 0);
         $dispo = isset($_POST['boisson_disponibilite']) ? 1 : 0;
-
-        $boissonModel->update($id, $nom, $prix, $dispo);
+        $description = trim($_POST['boisson_description'] ?? '');
+        $image_url   = trim($_POST['boisson_image_url'] ?? '');
+        $boissonModel->update($id, $nom, $description, $prix, $image_url, $dispo);
         header('Location: index.php?section=boisson');
         exit;
     }

@@ -13,17 +13,15 @@
             type="text"
             id="product_nom"
             name="product_nom"
-            required
-        >
+            required>
     </div>
 
-    <div>
+    <div style="margin-top:1em;">
         <label for="product_description">Description :</label><br>
         <textarea
             id="product_description"
             name="product_description"
-            rows="2"
-        ></textarea>
+            rows="2"><?= htmlspecialchars($produit['product_description'], ENT_QUOTES) ?></textarea>
     </div>
 
     <div>
@@ -33,17 +31,16 @@
             id="product_prix"
             name="product_prix"
             step="0.01"
-            required
-        >
+            required>
     </div>
 
-    <div>
+    <div style="margin-top:1em;">
         <label for="product_image_url">Image URL :</label><br>
         <input
             type="url"
             id="product_image_url"
             name="product_image_url"
-        >
+            value="<?= htmlspecialchars($produit['product_image_url'], ENT_QUOTES) ?>">
     </div>
 
     <div>
@@ -52,8 +49,7 @@
                 type="checkbox"
                 name="product_disponibilite"
                 value="1"
-                checked
-            >
+                checked>
             Disponible
         </label>
     </div>
@@ -69,8 +65,9 @@
         </select>
     </div>
 
-    <p>
-        <button type="submit">Ajouter</button>
+    <p style="margin-top:1em;">
+        <button type="submit">Enregistrer</button>
+        <a href="index.php?section=produit">Annuler</a>
     </p>
 </form>
 

@@ -19,18 +19,18 @@ class Menu extends Model
 
     public function delete($id)
     {
-    // 1) Supprimer les liens menu → produits
-    $sql = "DELETE FROM menu_produit WHERE menu_id = ?";
-    $this->db->prepare($sql)->execute([$id]);
+        // 1) Supprimer les liens menu → produits
+        $sql = "DELETE FROM menu_produit WHERE menu_id = ?";
+        $this->db->prepare($sql)->execute([$id]);
 
-    // 2) (Si tu utilises aussi commande_menu) Supprimer les liens commande → menu
-    $sql = "DELETE FROM commande_menu WHERE menu_id = ?";
-    $this->db->prepare($sql)->execute([$id]);
+        // 2) (Si tu utilises aussi commande_menu) Supprimer les liens commande → menu
+        $sql = "DELETE FROM commande_menu WHERE menu_id = ?";
+        $this->db->prepare($sql)->execute([$id]);
 
-    // 3) Supprimer le menu lui‐même
-    $sql = "DELETE FROM menu WHERE menu_id = ?";
-    $stmt = $this->db->prepare($sql);
-    return $stmt->execute([$id]);
+        // 3) Supprimer le menu lui‐même
+        $sql = "DELETE FROM menu WHERE menu_id = ?";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([$id]);
     }
 
     public function get($id)
@@ -46,5 +46,15 @@ class Menu extends Model
         $stmt = $this->db->query("SELECT * FROM menu");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getProduitsByMenu(int $menuId): array
+    {
+        $sql  = "SELECT p.*
+            FROM menu_produit mp
+            JOIN produit p ON p.product_id = mp.product_id
+            WHERE mp.menu_id = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$menuId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
-?>

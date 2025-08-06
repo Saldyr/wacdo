@@ -58,6 +58,11 @@ $section = $_GET['section']         ?? '';
         <?php if ($role === 5): // Client 
         ?>
             <a
+                href="index.php?section=profile"
+                class="<?= $section === 'profile' ? 'active' : '' ?>">
+                Mon profil
+            </a>
+            <a
                 href="index.php?section=commande"
                 class="<?= $section === 'commande' && $action === ''      ? 'active' : '' ?>">
                 Passer commande
@@ -86,7 +91,7 @@ $section = $_GET['section']         ?? '';
         <?php if ($role !== null): // Tout utilisateur connecté 
         ?>
             <span>
-                Bonjour <?= htmlspecialchars($_SESSION['user']['name'], ENT_QUOTES) ?> |
+                Bonjour <?= htmlspecialchars($_SESSION['user']['name'], ENT_QUOTES) ?>
                 <a href="index.php?section=auth&action=logout">Déconnexion</a>
             </span>
         <?php endif; ?>

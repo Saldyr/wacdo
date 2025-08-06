@@ -1,5 +1,5 @@
 <?php
-// controller/RegisterController.php
+
 require_once __DIR__ . '/../model/Utilisateur.php';
 $uModel = new Utilisateur();
 
@@ -20,10 +20,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Cet email est déjà utilisé.';
     } else {
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-        $success = $uModel->add($prenom, $nom, $email, $hashedPassword, 5);
+        $hasConsent   = isset($_POST['register_consentement']) && $_POST['register_consentement'] === '1';
+        $dateConsent  = $hasConsent ? new \DateTime() : null;
+        $success = $uModel->add(
+            $prenom,
+            $nom,
+            $email,
+            $hashedPassword,
+            5,
+            $hasConsent,
+            $dateConsent
+        );
         if ($success) {
-            // Redirection vers la page de commandes avec message de confirmation
-            header('Location: index.php?section=commande&registered=1');
+            header('Location: index.php?section=auth&registered=1');
             exit;
         } else {
             $error = 'Erreur lors de l\'inscription, réessayez.';
