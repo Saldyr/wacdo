@@ -1,105 +1,131 @@
-# Back-office Wacdo – Gestion du catalogue et des commandes
+# Wacdo – Back-office & Client Order Management
 
-Ce projet permet de gérer les produits, menus et commandes d’une borne Wacdo via une interface back-office développée en PHP (architecture MVC) et MySQL.
+Ce projet **Wacdo** fournit une interface **back-office** pour gérer le catalogue (produits, menus, boissons) et les commandes, ainsi qu’une interface **client** simple permettant de passer et consulter ses commandes. Développé en **PHP 8** (architecture MVC) avec une base **MySQL**, il intègre également les exigences **RGPD** (consentement, anonymisation).
+
+---
+
+## Table des matières
+1. [Prérequis](#prérequis)
+2. [Installation](#installation)
+3. [Configuration](#configuration)
+4. [Base de données](#base-de-données)
+5. [Démarrage de l’application](#démarrage-de-lapplication)
+6. [Structure du projet](#structure-du-projet)
+7. [Tests](#tests)
+8. [Déploiement](#déploiement)
+9. [Contribuer](#contribuer)
+
+---
 
 ## Prérequis
+- **PHP** ≥ 8.1 (testé sous 8.4)  
+- **Composer** ≥ 2.0  
+- **MySQL** ≥ 5.7 ou 8.x  
+- Extensions PHP : `pdo_mysql`, `mbstring`, `openssl`, `json`  
+- **Git**, un éditeur de code ou IDE (VS Code, PhpStorm, Sublime…)  
 
-- **PHP** : 8.4.0  
-- **Composer** : 2.8.6  
-- **MySQL** : 9.1.0 (MySQL Community Server)  
-- **Extensions PHP requises** :  
-  - pdo_mysql  
-  - mbstring  
-  - openssl  
-  - json  
-- **Outils** :  
-  - Git  
-  - Un IDE ou éditeur de code (VS Code, PhpStorm, Sublime…)
+---
 
 ## Installation
+1. **Cloner le dépôt**
+   ```bash
+   git clone https://github.com/Saldyr/wacdo.git
+   cd wacdo
+   ```
+2. **Installer les dépendances**
+   ```bash
+   composer install
+   ```
+3. **Configurer la base de données**
+   - Ouvrez `config/db.php` et renseignez vos paramètres MySQL : hôte, port, nom BD, utilisateur, mot de passe.
+4. **Créer la base et exécuter les migrations**
+   ```bash
+   mysql -u <votre_user> -p <nom_bd> < wacdo.sql
+   # ou, si vous préférez, lancer chaque script :
+   mysql -u <user> -p <nom_bd> < migrations/001_create_role.sql
+   …
+   mysql -u <user> -p <nom_bd> < migrations/013_add_is_active_to_utilisateur.sql
+   ```
 
-```bash
-# 1. Cloner le dépôt
-git clone https://github.com/Saldyr/wacdo.git
-cd wacdo
+---
 
-# 2. Installer les dépendances PHP
-composer install
-
-
-# 3. Éditez config/db.php pour renseigner :
-#   host, port, database, username, password
-
-# 4. Exécuter les migrations pour créer les tables
-mysql -u <votre_user> -p wacdo < migrations/*.sql
-```
 ## Configuration
-
-Les paramètres de connexion à la base de données sont stockés dans le fichier `config/db.php`.  
-Pour les adapter à votre environnement, ouvrez ce fichier et modifiez simplement le tableau renvoyé :
-
+Toutes les options de connexion sont centralisées dans `config/db.php` :
 ```php
 <?php
 return [
-  'host'     => '127.0.0.1',  // Adresse du serveur MySQL
-  'port'     => 3306,         // Port MySQL (par défaut 3306)
-  'database' => 'wacdo',      // Nom de la base de données
-  'username' => 'root',       // Nom d’utilisateur MySQL
-  'password' => '',           // Mot de passe MySQL (vide s’il n’y en a pas)
+  'host'     => '127.0.0.1',
+  'port'     => 3306,
+  'database' => 'wacdo',
+  'username' => 'root',
+  'password' => '',
 ];
 ```
+La classe `lib/Database.php` lit ces valeurs pour établir la connexion PDO.
 
-La classe Database (dans lib/Database.php) lit automatiquement ces valeurs :
-```php 
-// Extrait de lib/Database.php
-$cfg = require __DIR__ . '/../config/db.php';
-$dsn = sprintf(
-    'mysql:host=%s;port=%d;dbname=%s;charset=utf8',
-    $cfg['host'],
-    $cfg['port'],
-    $cfg['database']
-);
-$db = new PDO($dsn, $cfg['username'], $cfg['password']);
-$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-```
-Aucune autre modification n’est nécessaire : enregistrez simplement vos valeurs dans config/db.php, puis relancez l’application pour que la connexion soit établie avec ces nouveaux paramètres.
-
-## Lancement 
-
-# Se placer dans le dossier 'public'
-cd public
-
-# Démarrer le serveur PHP intégré
-php -S 127.0.0.1:8000
-
-## Structure du projet
-
-- `public/` : point d’entrée (front-controller)  
-- `config/` : configuration de la base  
-- `lib/` : classes utilitaires  
-- `model/`, `controller/`, `view/` : MVC  
-- `migrations/` : scripts SQL  
-- `docs/` : ERD & spécifications  
-
+---
 
 ## Base de données
+- Les scripts SQL sont dans le dossier `migrations/` numérotés de **001** à **013**.  
+- Un dump global est disponible sous `wacdo.sql`.  
+- Le schéma conceptuel (ERD) se trouve dans `docs/ERD_Wacdo.png`.
 
-Le schéma de la base est disponible dans docs/ERD_Wacdo.png
+---
 
-## Documentation fonctionnelle
+## Démarrage de l’application
+1. Positionnez-vous dans le dossier `public/` :
+   ```bash
+   cd public
+   ```
+2. Lancez le serveur PHP intégré :
+   ```bash
+   php -S 127.0.0.1:8000
+   ```
+3. Ouvrez votre navigateur à l’adresse :  `http://127.0.0.1:8000`
 
-Les workflows (login, CRUD utilisateurs, gestion du catalogue, process de commande) sont décrits dans docs/functional_spec.md.
+---
 
-## Conformité RGPD
+## Structure du projet
+```
+/                     # racine
+├─ public/            # front controller (index.php, api.php)
+├─ config/            # config DB, constantes métier
+├─ lib/               # classes utilitaires (DB, Auth...)
+├─ model/             # classes modèles (Utilisateur, Produit...)
+├─ controller/        # controllers MVC
+├─ view/              # vues HTML/PHP
+├─ migrations/        # scripts de création ou modification de tables
+├─ docs/              # spécifications fonctionnelles, RGPD, ERD
+├─ README.md
+└─ wacdo.sql          # dump de la base complète
+```
 
-Détails du stockage du consentement et de la procédure de droit à l’oubli dans docs/RGPD.md.
+---
 
 ## Tests
+- Configuration PHPUnit fournie (`phpunit.xml`).  
+- Pour lancer la suite de tests :
+   ```bash
+   vendor/bin/phpunit --configuration phpunit.xml
+   ```
+- Objectif de couverture minimale : **70 %**.
 
-Pour lancer la suite de tests unitaires :
+---
 
+## Déploiement
+Sur un serveur de production (Apache/Nginx + PHP-FPM) :
 ```bash
-composer require --dev phpunit/phpunit
-./vendor/bin/phpunit
-```
+git pull origin main
+composer install --no-dev
+# Exécuter les migrations SQL ou importer wacdo.sql
+# Exemple : mysql -u prod_user -p prod_bd < wacdo.sql
+# Régénérer le cache OPcache si activé
+service php7.4-fpm reload    # adapter à votre version
+``` 
+Veillez à :
+- Définir les variables de connexion en production dans `config/db.php` (ou passer à un `.env`).  
+- Protéger le dossier `migrations/` et `docs/` si nécessaire.
+
+---
+
 
