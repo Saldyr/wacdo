@@ -57,4 +57,11 @@ class Menu extends Model
         $stmt->execute([$menuId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function addProduit(int $menuId, int $productId): bool
+    {
+        $sql  = "INSERT INTO menu_produit (menu_id, product_id) VALUES (?, ?)";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([$menuId, $productId]);
+    }
 }

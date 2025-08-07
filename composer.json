@@ -1,5 +1,16 @@
 {
+    "autoload": {
+        "classmap": [
+            "model/",
+            "controller/",
+            "lib/"
+        ]
+    },
     "require-dev": {
         "phpunit/phpunit": "^12.3"
+    },
+    "scripts": {
+        "test": "phpunit --colors=always",
+        "coverage": "phpunit --colors=always --coverage-text"
     }
 }

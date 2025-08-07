@@ -24,12 +24,13 @@ class Produit extends Model
     }
 
     // Récupère un produit par son id
-    public function get($id)
+    public function get($id): ?array
     {
         $sql = "SELECT * FROM produit WHERE product_id = ?";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row !== false ? $row : null;
     }
 
     // Met à jour un produit

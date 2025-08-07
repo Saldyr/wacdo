@@ -2,7 +2,11 @@
 require_once 'Model.php';
 
 class Utilisateur extends Model
-{
+{public function __construct(?\PDO $pdo = null)
+    {
+        parent::__construct($pdo);
+    }
+
     protected bool $consentement;
     protected ?\DateTime $date_consentement;
     protected bool $is_active;

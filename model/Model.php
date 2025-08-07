@@ -1,15 +1,17 @@
 <?php
-require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../lib/Database.php';
 
-class Model {
-    protected $db;
+class Model
+{
+    protected \PDO $db;
 
-    public function __construct() {
-        $this->db = Database::connect();
+    public function __construct(?\PDO $pdo = null)
+    {
+        $this->db = $pdo ?? Database::connect();
     }
 
-    public function getLastInsertId() {
+    public function getLastInsertId()
+    {
         return $this->db->lastInsertId();
     }
 }
-?>
