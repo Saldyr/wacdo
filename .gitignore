@@ -1,0 +1,26 @@
+# Dépendances PHP installées par Composer
+/vendor/
+
+# Cache PHPUnit
+.phpunit.result.cache
+
+# Fichiers d’environnement
+.env
+.env.local
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Logs et fichiers temporaires
+*.log
+*.tmp
+
+# Dossiers ou fichiers de build (si vous en avez)
+/build/
+/dist/
+
+# IDEs (ajustez selon votre outil)
+/.idea/
+/.vscode/
+/nbproject/
