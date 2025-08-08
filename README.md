@@ -210,7 +210,7 @@ E --> M[Voir mes livraisons]
 F --> N[Formulaire de commande]
 F --> O[Historique de mes commandes]
 F --> P[Détail d’une commande]
-
+```
 
 ---
 
