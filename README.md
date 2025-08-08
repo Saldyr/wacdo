@@ -191,8 +191,12 @@ Toutes les spécifications fonctionnelles sont décrites dans :
 ```mermaid
 flowchart TD
 A[Utilisateur non connecté] -->|Connexion| B{Choix de rôle}
-B -->|Admin – Role 1| C[Back-Office]
-B -->|Client – Role 5| F[Passer commande]
+
+B -->|Admin – Role 1| C[Back-Office]
+B -->|Préparateur – Role 2| D[Commandes back-office]
+B -->|Accueil – Role 3| D
+B -->|Livreur – Role 4| E[Mes livraisons]
+B -->|Client – Role 5| F[Passer commande]
 
 C --> G[CRUD Produits]
 C --> H[CRUD Catégories]
@@ -200,10 +204,13 @@ C --> I[CRUD Menus]
 C --> J[CRUD Boissons]
 C --> K[Gestion Utilisateurs]
 
-F --> L[Formulaire de commande]
-F --> M[Historique de mes commandes]
-F --> N[Détail d’une commande]
-```
+D --> L[Traiter commandes]
+E --> M[Voir mes livraisons]
+
+F --> N[Formulaire de commande]
+F --> O[Historique de mes commandes]
+F --> P[Détail d’une commande]
+
 
 ---
 
