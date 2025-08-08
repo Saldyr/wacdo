@@ -196,10 +196,10 @@ Toutes les spécifications sont décrites dans :
 ```mermaid
 flowchart TD
 A[Utilisateur non connecté] -->|Connexion| B{Choix de rôle}
-B -->|Admin| C[Tableau de bord Back-Office]
-B -->|Manager/Prépa (2,3)| D[Commandes back-office]
-B -->|Livreur (4)| E[Mes livraisons]
-B -->|Client (5)| F[Passer commande]
+B -->|Admin Role 1| C[Tableau de bord Back-Office]
+B -->|Manager/Prépa Role 2 et 3| D[Commandes back-office]
+B -->|Livreur Role 4| E[Mes livraisons]
+B -->|Client Role 5| F[Passer commande]
 
 C --> G[CRUD Produits]
 C --> H[CRUD Catégories]
