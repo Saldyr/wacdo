@@ -191,8 +191,6 @@ Toutes les spécifications sont décrites dans :
 
 ## Schéma fonctionnel
 
-## Schéma fonctionnel
-
 ```mermaid
 flowchart TD
 A[Utilisateur non connecté] -->|Connexion| B{Choix de rôle}
