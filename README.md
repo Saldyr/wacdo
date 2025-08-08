@@ -208,27 +208,4 @@ C --> K[Gestion Utilisateurs]
 F --> L[Formulaire de commande]
 F --> M[Historique de mes commandes]
 F --> N[Détail d’une commande]
-
-## Sécurité et rôles
-
-L’accès aux différentes parties de l’application est contrôlé selon le rôle de l’utilisateur, grâce à la classe `lib/Auth.php` et à l’appel `Auth::check([...])` en début de chaque controller.
-
-| Role ID | Nom du rôle      | Accès principal                         |
-|:-------:|:-----------------|:----------------------------------------|
-| 1        | Administrateur   | CRUD complet (Produits, Catégories, Menus, Boissons, Utilisateurs) |
-| 2        | Manager          | Consultation et gestion des commandes back-office |
-| 3        | Préparateur/Accueil | Consultation et gestion des commandes back-office |
-| 4        | Livreur          | Accès à ses livraisons via `getByLivreur()` et `assignToLivreur()` |
-| 5        | Client           | Passage de commande, historique et profil via la section « Mon compte » |
-
-**Exemples d’usage dans les controllers** :  
-```php
-// Back-office Utilisateurs (Admin seul)
-Auth::check([1]);  
-
-// Commandes back-office (Admin, Manager, Prépa)
-Auth::check([1,2,3]);  
-
-// Espace client (Client seul)
-Auth::check([5]);
-// … etc.
+```
