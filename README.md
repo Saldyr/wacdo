@@ -195,7 +195,7 @@ Toutes les spécifications sont décrites dans :
 
 ```mermaid
 flowchart TD
-A -->[Utilisateur non connecté] -->|Connexion| B{Choix de rôle}
+A[Utilisateur non connecté] -->|Connexion| B{Choix de rôle}
 B -->|Admin (1)| C[Tableau de bord Back-Office]
 B -->|Manager/Prépa (2,3)| D[Commandes back-office]
 B -->|Livreur (4)| E[Mes livraisons]
@@ -210,4 +210,3 @@ C --> K[Gestion Utilisateurs]
 F --> L[Formulaire de commande]
 F --> M[Historique de mes commandes]
 F --> N[Détail d’une commande]
-```
