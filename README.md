@@ -54,11 +54,11 @@ Toutes les options de connexion sont centralisées dans `config/db.php` :
 ```php
 <?php
 return [
-  'host'     => '127.0.0.1',
-  'port'     => 3306,
-  'database' => 'wacdo',
-  'username' => 'root',
-  'password' => '',
+   'host'     => '127.0.0.1',
+   'port'     => 3306,
+   'database' => 'wacdo',
+   'username' => 'root',
+   'password' => '',
 ];
 ```
 La classe `lib/Database.php` lit ces valeurs pour établir la connexion PDO.
@@ -71,6 +71,54 @@ La classe `lib/Database.php` lit ces valeurs pour établir la connexion PDO.
 - Le schéma conceptuel (ERD) se trouve dans `docs/ERD_Wacdo.png`.
 
 ---
+
+## Exemples de requêtes SQL
+
+Voici quelques requêtes illustrant l’exploitation des données :
+
+1. **Nombre de commandes par utilisateur**  
+   ```sql
+   SELECT 
+      u.user_prenom || ' ' || u.user_nom AS utilisateur,
+      COUNT(c.order_id) AS nb_commandes
+   FROM utilisateur u
+   JOIN commande c 
+      ON c.user_id = u.user_id
+   GROUP BY u.user_id;
+
+2. **Total vendu par menu**
+```sql
+   SELECT
+   c.order_id,
+   b.boisson_nom,
+   b.boisson_prix
+FROM commande c
+JOIN boisson b 
+   ON b.boisson_id = c.boisson_id
+WHERE c.order_statut_commande <> 'livrée';
+```
+
+3. **Liste des boissons non encore livrées**
+```sql
+SELECT
+   c.order_id,
+   b.boisson_nom,
+   b.boisson_prix
+FROM commande c
+JOIN boisson b 
+   ON b.boisson_id = c.boisson_id
+WHERE c.order_statut_commande <> 'livrée';
+```
+4. **Détail d’une commande (produits + quantités)**
+```sql
+SELECT
+   p.product_nom,
+   cp.order_product_quantite AS quantite
+FROM commande_produit cp
+JOIN produit p 
+   ON p.product_id = cp.product_id
+WHERE cp.order_id = 123;
+```
 
 ## Démarrage de l’application
 1. Positionnez-vous dans le dossier `public/` :
@@ -128,4 +176,35 @@ Veillez à :
 
 ---
 
+## RGPD
 
+La gestion du consentement et l’anonymisation sont implémentées dans :
+- **`view/login.php`** : le checkbox `register_consentement` et son enregistrement (modèle `Utilisateur::add`).  
+- **`controller/UtilisateurController.php`** : anonymisation lors de la suppression via `setConsentement(false)` et `date_consentement = NULL`.  
+
+Voir le détail dans [docs/RGPD.md](docs/RGPD.md).
+
+## Spécifications fonctionnelles
+
+Toutes les spécifications sont décrites dans :  
+[docs/functional_spec.md](docs/functional_spec.md)
+
+## Schéma fonctionnel
+
+```mermaid
+flowchart TD
+   A[Utilisateur non connecté] -->|Connexion| B{Choix de rôle}
+   B -->|Admin (1)| C[Tableau de bord Back-Office]
+   B -->|Manager/Prépa (2,3)| D[Commandes back-office]
+   B -->|Livreur (4)| E[Mes livraisons]
+   B -->|Client (5)| F[Passer commande]
+
+   C --> G[CRUD Produits]
+   C --> H[CRUD Catégories]
+   C --> I[CRUD Menus]
+   C --> J[CRUD Boissons]
+   C --> K[Gestion Utilisateurs]
+
+   F --> L[Formulaire de commande]
+   F --> M[Historique de mes commandes]
+   F --> N[Détail d’une commande]
