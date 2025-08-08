@@ -192,7 +192,7 @@ Toutes les spécifications sont décrites dans :
 ## Schéma fonctionnel
 
 ```mermaid
-flowchart TD
+   flowchart TD
    A[Utilisateur non connecté] -->|Connexion| B{Choix de rôle}
    B -->|Admin (1)| C[Tableau de bord Back-Office]
    B -->|Manager/Prépa (2,3)| D[Commandes back-office]
