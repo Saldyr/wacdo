@@ -191,7 +191,9 @@ Toutes les spécifications sont décrites dans :
 
 ## Schéma fonctionnel
 
-```````mermaid```````
+## Schéma fonctionnel
+
+```mermaid
 flowchart TD
 A[Utilisateur non connecté] -->|Connexion| B{Choix de rôle}
 B -->|Admin (1)| C[Tableau de bord Back-Office]
@@ -208,4 +210,4 @@ C --> K[Gestion Utilisateurs]
 F --> L[Formulaire de commande]
 F --> M[Historique de mes commandes]
 F --> N[Détail d’une commande]
-```````
+```
