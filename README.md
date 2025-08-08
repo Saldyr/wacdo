@@ -237,3 +237,15 @@ Auth::check([4]);
 // Espace client (Client seul)
 Auth::check([5]);
 // … etc.
+```
+## Couverture des tests
+
+Pour lancer l’ensemble des tests unitaires et générer un rapport de couverture :
+
+```bash
+# Exécution des tests
+vendor/bin/phpunit --configuration phpunit.xml
+
+# Avec rapport de couverture au format texte
+vendor/bin/phpunit --configuration phpunit.xml --coverage-text
+```
