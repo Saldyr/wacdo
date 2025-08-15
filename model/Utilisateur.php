@@ -2,7 +2,8 @@
 require_once 'Model.php';
 
 class Utilisateur extends Model
-{public function __construct(?\PDO $pdo = null)
+{
+    public function __construct(?\PDO $pdo = null)
     {
         parent::__construct($pdo);
     }
@@ -14,7 +15,7 @@ class Utilisateur extends Model
     // Retrouve un utilisateur par email
     public function findByEmail(string $email): ?array
     {
-        $sql  = "SELECT * FROM utilisateur WHERE user_mail = ?";
+        $sql  = "SELECT * FROM utilisateur WHERE user_mail = ? AND is_active = 1 LIMIT 1";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$email]);
         $u = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -98,6 +99,31 @@ class Utilisateur extends Model
         return $stmt->execute([$id]);
     }
 
+    public function anonymize(int $id): bool
+    {
+        // adresse unique, non réutilisable
+        $anonEmail = 'anon+' . $id . '@example.invalid';
+
+        // Tes colonnes : user_prenom, user_nom, user_mail, consentement, date_consentement, is_active
+        $sql = "UPDATE utilisateur
+            SET user_prenom = 'Anonyme',
+                user_nom = CONCAT('Utilisateur ', user_id),
+                user_mail = :email,
+                consentement = 0,
+                date_consentement = NULL,
+                is_active = 0
+            WHERE user_id = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([':email' => $anonEmail, ':id' => $id]);
+    }
+
+    public function getAllActive(): array
+    {
+        $sql = "SELECT * FROM utilisateur WHERE is_active = 1 ORDER BY user_id DESC";
+        return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+
     // Met à jour consentement, date_consentement et statut d'activation
     public function saveStatus(int $id): bool
     {
@@ -112,6 +138,17 @@ class Utilisateur extends Model
             $id,
         ]);
     }
+
+    public function getLivreursActifs(): array
+    {
+        $sql = "SELECT user_id, user_prenom, user_nom
+            FROM utilisateur
+            WHERE role_id = 4 AND is_active = 1
+            ORDER BY user_nom, user_prenom";
+        return $this->db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+
 
     // Getter & setter consentement
     public function getConsentement(): bool

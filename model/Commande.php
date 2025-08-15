@@ -2,6 +2,7 @@
 require_once 'Model.php';
 require_once __DIR__ . '/CommandeMenu.php';
 require_once __DIR__ . '/CommandeProduit.php';
+require_once __DIR__ . '/CommandeBoisson.php';
 require_once __DIR__ . '/Menu.php';
 require_once __DIR__ . '/Produit.php';
 require_once __DIR__ . '/Boisson.php';
@@ -13,12 +14,19 @@ class Commande extends Model
         ?string $heure_livraison,
         string $statut,
         string $numero_ticket,
-        int $user_id,
-        ?int $boisson_id = null,
+        ?int $user_id,
+        ?int $livreur_id = null,
         string $order_type = 'sur_place'
     ): bool {
-        // SQL sur une seule ligne sans antislash ni saut de ligne
-        $sql = "INSERT INTO commande (order_date_commande, order_heure_livraison, order_statut_commande, order_numero_ticket, user_id, boisson_id, order_type) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO commande (
+                order_date_commande,
+                order_heure_livraison,
+                order_statut_commande,
+                order_numero_ticket,
+                user_id,
+                livreur_id,
+                order_type
+            ) VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([
             $date_commande,
@@ -26,10 +34,11 @@ class Commande extends Model
             $statut,
             $numero_ticket,
             $user_id,
-            $boisson_id,
+            $livreur_id,
             $order_type,
         ]);
     }
+
 
     public function update(
         int $order_id,
@@ -37,12 +46,19 @@ class Commande extends Model
         ?string $heure_livraison,
         string $statut,
         string $numero_ticket,
-        int $user_id,
-        ?int $boisson_id = null,
+        ?int $user_id,
+        ?int $livreur_id = null,
         string $order_type = 'sur_place'
     ): bool {
-        // SQL sur une seule ligne sans retour
-        $sql = "UPDATE commande SET order_date_commande = ?, order_heure_livraison = ?, order_statut_commande = ?, order_numero_ticket = ?, user_id = ?, boisson_id = ?, order_type = ? WHERE order_id = ?";
+        $sql = "UPDATE commande SET
+                order_date_commande   = ?,
+                order_heure_livraison = ?,
+                order_statut_commande = ?,
+                order_numero_ticket   = ?,
+                user_id               = ?,
+                livreur_id            = ?,
+                order_type            = ?
+            WHERE order_id = ?";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([
             $date_commande,
@@ -50,7 +66,7 @@ class Commande extends Model
             $statut,
             $numero_ticket,
             $user_id,
-            $boisson_id,
+            $livreur_id,
             $order_type,
             $order_id,
         ]);
@@ -119,11 +135,12 @@ class Commande extends Model
         }
 
         // Boisson
-        $cmd = $this->get($orderId);
-        if (!empty($cmd['boisson_id'])) {
-            $b  = new Boisson();
-            $boisson = $b->get((int)$cmd['boisson_id']);
-            $total += $boisson['boisson_prix'] ?? 0;
+        $cb = new CommandeBoisson();
+        $bM = new Boisson();
+        foreach ($cb->getBoissonsByCommande($orderId) as $row) {
+            $bo = $bM->get((int)$row['boisson_id']);
+            $q  = (int)$row['order_boisson_quantite'];
+            $total += ($bo['boisson_prix'] ?? 0) * $q;
         }
 
         return $total;

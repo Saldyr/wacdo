@@ -7,7 +7,7 @@ class ProduitTest extends TestCase
     {
         // 1) Insérez d'abord une catégorie
         $this->db->exec("
-            INSERT INTO categorie (categorie_nom)
+            INSERT INTO categorie (category_nom)
             VALUES ('Catégorie Test');
         ");
 
@@ -41,7 +41,7 @@ class ProduitTest extends TestCase
     {
         // 1) Catégorie
         $this->db->exec("
-            INSERT INTO categorie (categorie_nom)
+            INSERT INTO categorie (category_nom)
             VALUES ('Cat2');
         ");
 

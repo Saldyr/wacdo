@@ -88,31 +88,35 @@ class CommandeTest extends TestCase
         $model = new \Commande($this->db);
         $date  = '2025-08-07';
 
-        // Simuler tickets "001" et "002"
         $this->db->exec("
-            INSERT INTO commande (
-                order_date_commande, order_statut_commande, order_numero_ticket, user_id, boisson_id, order_type
-            ) VALUES
-                ('$date','s','001',1,null,'sur_place'),
-                ('$date','s','002',1,null,'sur_place');
-        ");
+        INSERT INTO utilisateur (
+            user_prenom, user_nom, user_mail, user_password,
+            user_date_creation, role_id, consentement, is_active
+        ) VALUES ('Tmp','User','tmp@test.invalid','h','2025-01-01',5,1,1)
+    ");
+        $uid = (int)$this->db->lastInsertId();
 
-        $next = $model->generateNextTicket($date);
-        $this->assertSame('003', $next, 'generateNextTicket()');
-
-        // Au-delà de 100 → retourne '000'
-        // Au-delà de 100 -> retourne '000'
         $this->db->exec("
-    INSERT INTO commande (
-        order_date_commande,
-        order_statut_commande,
-        order_numero_ticket,
-        user_id,
-        boisson_id,
-        order_type
-    ) VALUES
-        ('$date', 's', '101', 1, NULL, 'sur_place');
-");
+        INSERT INTO commande (
+            order_date_commande, order_heure_livraison, order_statut_commande,
+            order_numero_ticket, user_id, order_type
+        ) VALUES
+            ('$date', NULL, 's', '001', $uid, 'sur_place'),
+            ('$date', NULL, 's', '002', $uid, 'sur_place')
+    ");
+
+        $this->assertSame('003', $model->generateNextTicket($date), 'generateNextTicket()');
+
+        // 4) Ajoute un ticket > 100 pour tester le wrap
+        $this->db->exec("
+        INSERT INTO commande (
+            order_date_commande, order_heure_livraison, order_statut_commande,
+            order_numero_ticket, user_id, order_type
+        ) VALUES
+            ('$date', NULL, 's', '101', $uid, 'sur_place')
+    ");
+
+        // 5) Après 101, next=102 -> wrap '000'
         $this->assertSame('000', $model->generateNextTicket($date));
     }
 

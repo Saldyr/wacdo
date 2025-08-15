@@ -5,6 +5,7 @@ class CommandeBoisson extends Model
 {
     public function add(int $orderId, int $boissonId, int $quantite = 1): bool
     {
+        if ($quantite < 1) $quantite = 1; 
         $sql = "
             INSERT INTO commande_boisson
             (order_id, boisson_id, quantity)
@@ -21,10 +22,6 @@ class CommandeBoisson extends Model
         return $stmt->execute([$orderId]);
     }
 
-    /**
-     * On alias la colonne quantity en order_boisson_quantite
-     * pour matcher le code de ton controller/vue.
-     */
     public function getBoissonsByCommande(int $orderId): array
     {
         $sql = "

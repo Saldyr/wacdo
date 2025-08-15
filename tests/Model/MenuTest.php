@@ -78,7 +78,7 @@ class MenuTest extends TestCase
     {
         // 1) Préparer une catégorie et un produit
         $this->db->exec("
-            INSERT INTO categorie (categorie_nom) VALUES ('Cat1');
+            INSERT INTO categorie (category_nom) VALUES ('Cat1');
         ");
         $this->db->exec("
             INSERT INTO produit

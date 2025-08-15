@@ -87,62 +87,63 @@
                 <p><strong>Total :</strong> <?= number_format($total, 2, ',', ' ') ?> €</p>
 
                 <div style="margin-top:1em;">
-                    <?php
-                    // Rôle 2 : préparation → prêt
-                    if ($role === 2 && $status === 'en_preparation'): ?>
+                    <?php if ($role === 2 && $status === 'en_preparation'): ?>
+                        <!-- Rôle 2 : préparation → prêt -->
                         <form method="post" action="index.php?section=commande&action=markReady" style="display:inline">
                             <input type="hidden" name="id" value="<?= $oid ?>">
                             <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf'], ENT_QUOTES) ?>">
                             <button type="submit">Marquer prête</button>
                         </form>
 
-                        <?php
-                    // Rôle 3 : prêt → servie / en_livraison
-                    elseif ($role === 3 && $status === 'pret'):
-                        if (in_array($type, ['sur_place', 'a_emporter'], true)): ?>
+                    <?php elseif ($role === 3 && $status === 'pret' && $cmd['order_type'] === 'livraison'): ?>
+                        <!-- Rôle 3 : prêt (livraison) → en_livraison + assignation -->
+                        <form method="post" action="index.php?section=commande&action=markReady" style="display:inline">
+                            <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf'], ENT_QUOTES) ?>">
+                            <input type="hidden" name="id" value="<?= (int)$cmd['order_id'] ?>">
+                            <select name="livreur_id" required>
+                                <option value="">-- Choisir livreur --</option>
+                                <?php foreach ($livreurs as $l): ?>
+                                    <option value="<?= (int)$l['user_id'] ?>">
+                                        <?= htmlspecialchars($l['user_nom'] . ' ' . $l['user_prenom'], ENT_QUOTES) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <button type="submit">Remettre au livreur</button>
+                        </form>
+
+                    <?php elseif ($role === 3 && $status === 'pret' && in_array($cmd['order_type'], ['sur_place', 'a_emporter'], true)): ?>
+                        <!-- Rôle 3 : prêt (sur place / à emporter) → servie -->
+                        <form method="post" action="index.php?section=commande&action=markReady" style="display:inline">
+                            <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf'], ENT_QUOTES) ?>">
+                            <input type="hidden" name="id" value="<?= (int)$cmd['order_id'] ?>">
+                            <button type="submit">Marquer servie</button>
+                        </form>
+
+                    <?php elseif ($role === 4 && $status === 'en_livraison'): ?>
+                        <!-- Rôle 4 : uniquement si la commande est assignée à CE livreur -->
+                        <?php $uid = $_SESSION['user']['user_id'] ?? null; ?>
+                        <?php if ($uid !== null && (int)$cmd['livreur_id'] === (int)$uid): ?>
                             <form method="post" action="index.php?section=commande&action=markReady" style="display:inline">
                                 <input type="hidden" name="id" value="<?= $oid ?>">
                                 <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf'], ENT_QUOTES) ?>">
-                                <button type="submit">Remettre au client</button>
-                            </form>
-                        <?php else: ?>
-                            <form method="post" action="index.php?section=commande&action=markReady" style="display:inline">
-                                <input type="hidden" name="id" value="<?= $oid ?>">
-                                <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf'], ENT_QUOTES) ?>">
-                                <button type="submit">Remettre au livreur</button>
+                                <button type="submit">Remis au client</button>
                             </form>
                         <?php endif; ?>
-
-                        <?php
-                    // Rôle 4 : en_livraison → prise / livrée
-                    elseif ($role === 4 && $status === 'en_livraison'):
-                        if ($cmd['livreur_id'] === null): ?>
-                            <form method="post" action="index.php?section=commande&action=prendre" style="display:inline">
-                                <input type="hidden" name="id" value="<?= $oid ?>">
-                                <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf'], ENT_QUOTES) ?>">
-                                <button type="submit">Prendre en charge</button>
-                            </form>
-                        <?php else: ?>
-                            <form method="post" action="index.php?section=commande&action=markReady" style="display:inline">
-                                <input type="hidden" name="id" value="<?= $oid ?>">
-                                <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf'], ENT_QUOTES) ?>">
-                                <button type="submit">Marquer livrée</button>
-                            </form>
-                    <?php endif;
-                    endif;
-                    ?>
+                    <?php endif; ?>
 
                     <?php if (in_array($role, [1, 3], true)): ?>
                         &nbsp;
                         <a href="index.php?section=commande&action=edit&id=<?= $oid ?>">Modifier</a>
                         &nbsp;|&nbsp;
-                        <form method="post" action="index.php?section=commande&action=delete" style="display:inline" onsubmit="return confirm('Supprimer la commande #<?= $oid ?> ?')">
+                        <form method="post" action="index.php?section=commande&action=delete" style="display:inline"
+                            onsubmit="return confirm('Supprimer la commande #<?= $oid ?> ?')">
                             <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf'], ENT_QUOTES) ?>">
                             <input type="hidden" name="id" value="<?= $oid ?>">
                             <button type="submit">Supprimer</button>
                         </form>
                     <?php endif; ?>
                 </div>
+
                 <hr>
             </li>
         <?php endforeach; ?>

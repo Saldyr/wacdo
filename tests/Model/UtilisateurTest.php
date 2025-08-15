@@ -19,7 +19,7 @@ class UtilisateurTest extends TestCase
             new \DateTime(),
             true          // is_active
         );
-        $this->assertTrue($ok, 'L’insert doit renvoyer true');
+        $this->assertTrue($ok, 'L insert doit renvoyer true');
 
         // Récupération par ID
         $id   = (int)$this->db->lastInsertId();

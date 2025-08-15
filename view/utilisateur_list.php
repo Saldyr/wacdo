@@ -3,6 +3,17 @@
 <h1>Gestion des utilisateurs</h1>
 <p><a href="index.php?section=utilisateur&action=add">Ajouter un utilisateur</a></p>
 
+<?php if (isset($_GET['info']) && $_GET['info'] === 'anonymized'): ?>
+    <p style="background:#e6ffea;color:#065f46;padding:8px;border:1px solid #065f46;">
+        Compte anonymisé et désactivé.
+    </p>
+<?php endif; ?>
+<?php if (isset($_GET['error']) && $_GET['error'] === 'admin_forbidden'): ?>
+    <p style="background:#ffe5e5;color:#a00;padding:8px;border:1px solid #a00;">
+        Impossible d’anonymiser un administrateur.
+    </p>
+<?php endif; ?>
+
 <table border="1" cellpadding="5" cellspacing="0">
     <thead>
         <tr>
@@ -56,8 +67,8 @@
                         style="display:inline">
                         <input type="hidden" name="id" value="<?= $u['user_id'] ?>">
                         <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?>">
-                        <button type="submit"
-                            onclick="return confirm('Supprimer cet utilisateur ?')">
+                        <button type="submit" title="Anonymiser et désactiver ce compte"
+                            onclick="return confirm('Anonymiser ce compte ? Les données perso seront remplacées et le compte sera désactivé (is_active=0).')">
                             🗑️
                         </button>
                     </form>

@@ -74,7 +74,7 @@ $uModel = new Utilisateur();
 // 1a) LISTE (par défaut)
 // ───────────────────────────────────────────────────────
 if (!isset($_GET['action'])) {
-    $users = $uModel->getAll();
+    $users = $uModel->getAllActive();
     require __DIR__ . '/../view/utilisateur_list.php';
     exit;
 }
@@ -162,12 +162,24 @@ if (($_GET['action'] ?? null) === 'edit' && isset($_GET['id'])) {
 // 1d) SUPPRESSION (POST)
 // ───────────────────────────────────────────────────────
 if (($_GET['action'] ?? null) === 'delete' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-    // CSRF
     if (!isset($_POST['csrf']) || $_POST['csrf'] !== $_SESSION['csrf']) {
         exit('CSRF détecté');
     }
     $id = (int) ($_POST['id'] ?? 0);
-    $uModel->delete($id);
-    header('Location: index.php?section=utilisateur');
+
+    // (optionnel) éviter d’anonymiser un admin
+    $user = $uModel->get($id);
+    if (!$user) {
+        header('Location: index.php?section=utilisateur&error=notfound');
+        exit;
+    }
+    if ((int)$user['role_id'] === 1) {
+        header('Location: index.php?section=utilisateur&error=admin_forbidden');
+        exit;
+    }
+
+    // Anonymisation + désactivation (plus de FK 1451)
+    $uModel->anonymize($id);
+    header('Location: index.php?section=utilisateur&info=anonymized');
     exit;
 }

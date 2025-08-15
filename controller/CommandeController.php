@@ -13,6 +13,7 @@ require_once __DIR__ . '/../model/CommandeMenu.php';
 require_once __DIR__ . '/../model/CommandeProduit.php';
 require_once __DIR__ . '/../model/CommandeBoisson.php';
 require_once __DIR__ . '/../model/Menu.php';
+require_once __DIR__ . '/../model/Utilisateur.php';
 require_once __DIR__ . '/../model/Produit.php';
 require_once __DIR__ . '/../model/Boisson.php';
 require_once __DIR__ . '/../model/Categorie.php';
@@ -521,9 +522,18 @@ if ($method === 'POST' && $action === 'markReady') {
     elseif ($rid === 4 && $cur === 'en_livraison')                          $nx = 'livree';
 
     if ($nx) {
-        $cmdM->updateStatus($oid, $nx);
+        if (
+            $nx === 'en_livraison'
+            && isset($_POST['livreur_id'])
+            && ctype_digit((string)$_POST['livreur_id'])
+        ) {
+            $cmdM->assignToLivreur($oid, (int)$_POST['livreur_id']);
+            // Si assignToLivreur ne change pas le statut, décommente :
+            // $cmdM->updateStatus($oid, 'en_livraison');
+        } else {
+            $cmdM->updateStatus($oid, $nx);
+        }
     }
-
     header('Location: index.php?section=commande');
     exit;
 }
@@ -542,16 +552,14 @@ elseif ($role === 3)  $commandes = array_filter(
         true
     )
 );
+
 elseif ($role === 4) {
     $uid = $_SESSION['user']['user_id'];
     $commandes = array_filter($all, function ($c) use ($uid) {
         return $c['order_statut_commande'] === 'en_livraison'
-            && (
-                $c['livreur_id'] === null
-                || $c['livreur_id'] === $uid
-            );
+            && $c['livreur_id'] === $uid;
     });
-} else               $commandes = array_filter($all, fn($c) => !in_array($c['order_statut_commande'], ['servie', 'livree'], true));
+} else $commandes = array_filter($all, fn($c) => !in_array($c['order_statut_commande'], ['servie', 'livree'], true));
 
 $menusParCommande = [];
 $produitsParCommande = [];
@@ -570,4 +578,13 @@ foreach ($commandes as $c) {
     $boissonsUniteParCommande[$oid] = $cbM->getBoissonsByCommande($oid);
     $boissonsParCommande[$oid] = $c['boisson_id'] ? $bM->get($c['boisson_id']) : null;
 }
+
+// -----------------------------------------------------------------------------
+// J) ASSIGNATION LIVREUR
+// -----------------------------------------------------------------------------
+if ($role === 3) { // Accueil/Prépa
+    $uM = new Utilisateur();
+    $livreurs = $uM->getLivreursActifs();
+}
+
 require __DIR__ . '/../view/commande_list.php';

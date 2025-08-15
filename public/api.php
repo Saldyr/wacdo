@@ -101,7 +101,7 @@ try {
                 $liste = $cbM->getBoissonsByCommande($orderId);
                 $o['boissons_additionnelles'] = array_map(fn($r) => [
                     'boisson'  => $bM->get($r['boisson_id']),
-                    'quantity' => (int)$r['quantity'],
+                    'quantity' => (int)$r['order_boisson_quantite'],
                 ], $liste);
 
                 $result[] = $o;

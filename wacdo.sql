@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : ven. 08 août 2025 à 12:48
+-- Généré le : ven. 15 août 2025 à 12:32
 -- Version du serveur : 9.1.0
 -- Version de PHP : 8.3.14
 
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `boisson` (
   `boisson_image_url` varchar(255) DEFAULT NULL,
   `boisson_disponibilite` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`boisson_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `boisson`
@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS `boisson` (
 INSERT INTO `boisson` (`boisson_id`, `boisson_nom`, `boisson_description`, `boisson_prix`, `boisson_image_url`, `boisson_disponibilite`) VALUES
 (1, 'L’Open Space (thé glacé)', 'Pour rester frais même en plein rush !', 2.50, '', 1),
 (2, 'La Power Limonade', 'La boisson qui booste plus qu’une réunion motivante !', 3.50, '', 1),
-(3, 'La Zénitude', 'La boisson qui te met en mode avion, même au bureau.', 2.50, '', 1),
+(3, 'La Zénitude', 'La boisson qui te met en mode avion, même au bureau.', 2.60, NULL, 1),
 (4, 'La Frapp’Attitude', 'Un coup de frais pour affronter tous les dossiers.', 2.50, '', 1),
 (10, 'Le Codeur', NULL, 3.50, NULL, 1);
 
@@ -87,33 +87,40 @@ CREATE TABLE IF NOT EXISTS `commande` (
   `order_date_commande` date NOT NULL,
   `order_created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `order_heure_livraison` time DEFAULT NULL,
-  `order_statut_commande` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `order_statut_commande` varchar(32) NOT NULL DEFAULT 'en_preparation',
   `order_numero_ticket` varchar(20) NOT NULL,
   `order_type` enum('sur_place','a_emporter','livraison') NOT NULL DEFAULT 'sur_place',
-  `user_id` int NOT NULL,
+  `user_id` int DEFAULT NULL,
   `livreur_id` int DEFAULT NULL,
-  `boisson_id` int DEFAULT NULL,
   PRIMARY KEY (`order_id`),
-  KEY `fk_commande_user` (`user_id`),
-  KEY `fk_commande_boisson` (`boisson_id`),
-  KEY `fk_commande_livreur` (`livreur_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=138 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  UNIQUE KEY `uq_commande_ticket_par_jour` (`order_date_commande`,`order_numero_ticket`),
+  KEY `ix_commande_statut` (`order_statut_commande`),
+  KEY `ix_commande_livreur_stat` (`livreur_id`,`order_statut_commande`),
+  KEY `ix_commande_user_stat` (`user_id`,`order_statut_commande`)
+) ;
 
 --
 -- Déchargement des données de la table `commande`
 --
 
-INSERT INTO `commande` (`order_id`, `order_date_commande`, `order_created_at`, `order_heure_livraison`, `order_statut_commande`, `order_numero_ticket`, `order_type`, `user_id`, `livreur_id`, `boisson_id`) VALUES
-(119, '2025-07-30', '2025-08-02 08:42:26', NULL, 'servie', '002', 'a_emporter', 17, NULL, NULL),
-(120, '2025-07-30', '2025-08-02 08:42:26', NULL, 'livree', '003', 'livraison', 17, 18, NULL),
-(121, '2025-07-30', '2025-08-02 08:42:26', NULL, 'servie', '004', 'sur_place', 17, NULL, NULL),
-(122, '2025-07-30', '2025-08-02 08:42:26', NULL, 'livree', '005', 'livraison', 17, 18, NULL),
-(123, '2025-07-30', '2025-08-02 08:42:26', NULL, 'servie', '006', 'sur_place', 17, NULL, NULL),
-(124, '2025-08-02', '2025-08-02 08:42:26', NULL, 'servie', '001', 'sur_place', 17, NULL, NULL),
-(125, '2025-08-02', '2025-08-02 08:50:09', NULL, 'livree', '002', 'livraison', 17, 18, NULL),
-(133, '2025-08-06', '2025-08-06 11:44:17', NULL, 'servie', '001', 'sur_place', 17, NULL, NULL),
-(136, '2025-08-06', '2025-08-06 14:06:53', NULL, 'delivered', 'TEST123', 'sur_place', 10, NULL, 3),
-(137, '2025-08-08', '2025-08-08 14:40:40', NULL, 'servie', '001', 'a_emporter', 34, NULL, NULL);
+INSERT INTO `commande` (`order_id`, `order_date_commande`, `order_created_at`, `order_heure_livraison`, `order_statut_commande`, `order_numero_ticket`, `order_type`, `user_id`, `livreur_id`) VALUES
+(119, '2025-07-30', '2025-08-02 08:42:26', NULL, 'servie', '002', 'a_emporter', 17, NULL),
+(120, '2025-07-30', '2025-08-02 08:42:26', NULL, 'livree', '003', 'livraison', 17, 18),
+(121, '2025-07-30', '2025-08-02 08:42:26', NULL, 'servie', '004', 'sur_place', 17, NULL),
+(122, '2025-07-30', '2025-08-02 08:42:26', NULL, 'livree', '005', 'livraison', 17, 18),
+(123, '2025-07-30', '2025-08-02 08:42:26', NULL, 'servie', '006', 'sur_place', 17, NULL),
+(124, '2025-08-02', '2025-08-02 08:42:26', NULL, 'servie', '001', 'sur_place', 17, NULL),
+(125, '2025-08-02', '2025-08-02 08:50:09', NULL, 'livree', '002', 'livraison', 17, 18),
+(133, '2025-08-06', '2025-08-06 11:44:17', NULL, 'servie', '001', 'sur_place', 17, NULL),
+(137, '2025-08-08', '2025-08-08 14:40:40', NULL, 'servie', '001', 'a_emporter', 34, NULL),
+(148, '2025-08-12', '2025-08-12 16:45:39', NULL, 'servie', '001', 'sur_place', 42, NULL),
+(149, '2025-08-12', '2025-08-12 16:46:11', NULL, 'servie', '002', 'a_emporter', 42, NULL),
+(153, '2025-08-12', '2025-08-12 17:30:38', NULL, 'servie', '004', 'a_emporter', 42, NULL),
+(155, '2025-08-12', '2025-08-12 17:39:40', NULL, 'servie', '005', 'sur_place', 42, NULL),
+(156, '2025-08-12', '2025-08-12 17:39:49', NULL, 'servie', '006', 'a_emporter', 42, NULL),
+(166, '2025-08-13', '2025-08-13 15:21:04', NULL, 'servie', '001', 'sur_place', 42, NULL),
+(167, '2025-08-13', '2025-08-13 15:21:35', NULL, 'servie', '002', 'a_emporter', 42, NULL),
+(168, '2025-08-13', '2025-08-13 15:21:51', NULL, 'livree', '003', 'livraison', 42, 43);
 
 -- --------------------------------------------------------
 
@@ -126,27 +133,33 @@ CREATE TABLE IF NOT EXISTS `commande_boisson` (
   `commande_boisson_id` int NOT NULL AUTO_INCREMENT,
   `order_id` int NOT NULL,
   `boisson_id` int NOT NULL,
-  `quantity` int NOT NULL DEFAULT '1',
+  `order_boisson_quantite` int NOT NULL DEFAULT '1',
   PRIMARY KEY (`commande_boisson_id`),
-  KEY `order_id` (`order_id`),
-  KEY `boisson_id` (`boisson_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=106 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `fk_commande_boisson__order_id_cascade_20250815` (`order_id`),
+  KEY `fk_commande_boisson__boisson_id_restrict_20250815` (`boisson_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=150 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `commande_boisson`
 --
 
-INSERT INTO `commande_boisson` (`commande_boisson_id`, `order_id`, `boisson_id`, `quantity`) VALUES
+INSERT INTO `commande_boisson` (`commande_boisson_id`, `order_id`, `boisson_id`, `order_boisson_quantite`) VALUES
 (88, 123, 2, 1),
 (89, 123, 1, 1),
 (90, 123, 3, 1),
 (91, 123, 10, 1),
 (93, 125, 10, 1),
 (97, 133, 1, 1),
-(102, 136, 3, 2),
-(103, 136, 4, 1),
 (104, 137, 2, 1),
-(105, 137, 10, 1);
+(105, 137, 10, 1),
+(127, 148, 3, 1),
+(128, 148, 4, 1),
+(129, 149, 2, 1),
+(131, 153, 3, 1),
+(134, 155, 4, 1),
+(147, 166, 1, 1),
+(148, 166, 2, 1),
+(149, 168, 4, 1);
 
 -- --------------------------------------------------------
 
@@ -162,10 +175,10 @@ CREATE TABLE IF NOT EXISTS `commande_menu` (
   `order_menu_quantite` int NOT NULL DEFAULT '1',
   `menu_boisson_id` int DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `fk_cm_order` (`order_id`),
-  KEY `fk_cm_menu` (`menu_id`),
-  KEY `fk_menu_boisson` (`menu_boisson_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=148219 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `fk_commande_menu__order_id_cascade_20250815` (`order_id`),
+  KEY `fk_commande_menu__menu_id_restrict_20250815` (`menu_id`),
+  KEY `fk_commande_menu__menu_boisson_id_setnull_20250815` (`menu_boisson_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=148304 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `commande_menu`
@@ -187,8 +200,22 @@ INSERT INTO `commande_menu` (`id`, `order_id`, `menu_id`, `order_menu_quantite`,
 (148208, 125, 3, 1, 3),
 (148214, 133, 2, 1, 1),
 (148215, 133, 3, 1, 3),
-(148217, 136, 2, 1, NULL),
-(148218, 137, 2, 1, 2);
+(148218, 137, 2, 1, 2),
+(148261, 148, 2, 1, 2),
+(148262, 148, 3, 1, 4),
+(148263, 149, 3, 1, 1),
+(148264, 149, 7, 1, 1),
+(148268, 153, 3, 1, 4),
+(148269, 153, 2, 1, 2),
+(148275, 156, 2, 1, 3),
+(148278, 155, 3, 1, 10),
+(148279, 155, 4, 1, 2),
+(148296, 167, 2, 1, 3),
+(148297, 167, 4, 1, 2),
+(148300, 166, 2, 1, 2),
+(148301, 166, 4, 1, 4),
+(148302, 168, 3, 1, 10),
+(148303, 168, 7, 1, 2);
 
 -- --------------------------------------------------------
 
@@ -202,7 +229,7 @@ CREATE TABLE IF NOT EXISTS `commande_produit` (
   `product_id` int NOT NULL,
   `order_product_quantite` int NOT NULL DEFAULT '1',
   PRIMARY KEY (`order_id`,`product_id`),
-  KEY `fk_cp_product` (`product_id`)
+  KEY `fk_commande_produit__product_id_restrict_20250815` (`product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -229,7 +256,29 @@ INSERT INTO `commande_produit` (`order_id`, `product_id`, `order_product_quantit
 (133, 19, 1),
 (137, 5, 1),
 (137, 9, 1),
-(137, 16, 1);
+(137, 16, 1),
+(148, 5, 1),
+(148, 11, 1),
+(148, 18, 1),
+(148, 27, 1),
+(149, 7, 1),
+(149, 9, 1),
+(149, 17, 1),
+(149, 19, 1),
+(153, 6, 1),
+(153, 9, 1),
+(153, 16, 1),
+(153, 19, 1),
+(155, 4, 1),
+(155, 7, 1),
+(156, 1, 1),
+(156, 4, 1),
+(166, 5, 1),
+(166, 16, 1),
+(166, 18, 1),
+(166, 27, 1),
+(167, 1, 1),
+(168, 6, 1);
 
 -- --------------------------------------------------------
 
@@ -246,7 +295,7 @@ CREATE TABLE IF NOT EXISTS `menu` (
   `menu_image_url` varchar(255) DEFAULT NULL,
   `menu_disponibilite` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`menu_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `menu`
@@ -255,7 +304,8 @@ CREATE TABLE IF NOT EXISTS `menu` (
 INSERT INTO `menu` (`menu_id`, `menu_nom`, `menu_description`, `menu_prix`, `menu_image_url`, `menu_disponibilite`) VALUES
 (2, 'L\'intello Gourmand', '', 12.70, '', 1),
 (3, 'L\'audacieux Comfort', '', 12.50, '', 1),
-(4, 'L’Executive Express', '', 12.60, '', 1);
+(4, 'L’Executive Express', '', 12.60, '', 1),
+(7, 'Menu Classique', 'Le menu simple', 12.50, '', 1);
 
 -- --------------------------------------------------------
 
@@ -268,7 +318,7 @@ CREATE TABLE IF NOT EXISTS `menu_produit` (
   `menu_id` int NOT NULL,
   `product_id` int NOT NULL,
   PRIMARY KEY (`menu_id`,`product_id`),
-  KEY `fk_mp_product` (`product_id`)
+  KEY `fk_menu_produit__product_id_restrict_20250815` (`product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -278,6 +328,9 @@ CREATE TABLE IF NOT EXISTS `menu_produit` (
 INSERT INTO `menu_produit` (`menu_id`, `product_id`) VALUES
 (2, 1),
 (3, 4),
+(7, 5),
+(7, 6),
+(7, 7),
 (4, 9),
 (2, 16),
 (4, 16),
@@ -302,8 +355,8 @@ CREATE TABLE IF NOT EXISTS `produit` (
   `product_disponibilite` tinyint(1) NOT NULL DEFAULT '1',
   `category_id` int NOT NULL,
   PRIMARY KEY (`product_id`),
-  KEY `fk_category_id` (`category_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `fk_produit__category_id__categorie_restrict_20250815` (`category_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `produit`
@@ -323,7 +376,8 @@ INSERT INTO `produit` (`product_id`, `product_nom`, `product_description`, `prod
 (17, 'Les Nuggets de la Réu', 'Petites bouchées dorées, tendres à l’intérieur, parfaites pour dynamiser toutes vos réunions. Les Nuggets de la Réu : à partager… ou à garder rien que pour soi !', 3.50, '', 1, 5),
 (18, 'Le Nuage Choco-Vanille', 'Un duo aérien de mousse au chocolat et crème vanille, aussi léger qu’un nuage, pour une pause tout en douceur.', 3.00, '', 1, 7),
 (19, 'Le Délice Croquant', 'Un dessert qui allie le fondant et le croustillant, avec un cœur chocolat et des éclats de biscuit, irrésistible à chaque bouchée.', 3.00, '', 1, 7),
-(20, 'La Douceur Fruitée', 'Un mélange frais de fruits de saison et de crème légère, parfait pour finir le repas sur une note vitaminée et gourmande.', 3.40, '', 1, 7);
+(20, 'La Douceur Fruitée', 'Un mélange frais de fruits de saison et de crème légère, parfait pour finir le repas sur une note vitaminée et gourmande.', 3.40, '', 1, 7),
+(27, 'Hot dog piquant', 'Un hot dog brulant', 5.00, '', 1, 2);
 
 -- --------------------------------------------------------
 
@@ -369,8 +423,9 @@ CREATE TABLE IF NOT EXISTS `utilisateur` (
   `date_consentement` datetime DEFAULT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`user_id`),
-  KEY `fk_utilisateur_role` (`role_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  UNIQUE KEY `uq_utilisateur_mail` (`user_mail`),
+  KEY `fk_utilisateur__role_id__role_restrict_20250815` (`role_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `utilisateur`
@@ -382,15 +437,11 @@ INSERT INTO `utilisateur` (`user_id`, `user_nom`, `user_prenom`, `user_mail`, `u
 (11, 'Accueil', 'Test', 'accueil@exemple.com', '$2y$12$DzPUNMyOwLCcze7.WPJLu.XL2dLjpcyNCxP8lv8QBNr2myZryeZMa', '2025-07-20', 3, 0, NULL, 1),
 (17, 'Anonyme', 'Anonyme', 'user+17@anonymise.local', '$2y$10$thKXGzPIi4TfxwUQ0BRERe9bNULrtH4PzivMLPzgKqa3aGhIeHdFC', '2025-07-27', 5, 0, NULL, 0),
 (18, 'test', 'Ilies', 'livreur@test.fr', '$2y$10$xhYJRm4Rad5CUMwJFXdQOuc1IpdhVHnXYw5.N4BW.HBU2vphyjiTW', '2025-07-28', 4, 0, NULL, 1),
-(26, 'Anonyme', 'Anonyme', 'user+26@anonymise.local', '$2y$10$wnzaLYDvAlEFRA7rUuQdg.mWFsgilzW3Cw/pZrXQjHVvvxOayvtja', '2025-08-06', 5, 0, NULL, 0),
-(27, 'Anonyme', 'Anonyme', 'user+27@anonymise.local', '$2y$10$UobCaFC5fK1/FGJozCppKuP2rR2grsngLPz8V5pudLg7XUXH5Kr3q', '2025-08-06', 5, 0, NULL, 0),
-(28, 'Anonyme', 'Anonyme', 'user+28@anonymise.local', '$2y$10$eH5RXGV8jv74xhKxA0Zq2.qGEqZ/b9MXPH0aFqh.sl2STXoETHndq', '2025-08-06', 5, 0, NULL, 0),
-(29, 'Anonyme', 'Anonyme', 'user+29@anonymise.local', '$2y$10$HGkf9LK6n78f0BpRs.H2aOzXWjpiY2P/D1dxmCEPh/uzrGfWjmLsy', '2025-08-06', 5, 0, NULL, 0),
-(30, 'Anonyme', 'Anonyme', 'user+30@anonymise.local', '$2y$10$DXOvvS1ifkc57v5aU0u3pOcBC6mhs2FtqAEvWDK1t16C/PF0f8XG2', '2025-08-06', 5, 0, NULL, 0),
-(31, 'Dupont', 'Jean', 'j.dupont@example.com', '$2y$12$g.8hk6DmGlyAg3Lha21bdOshe2beV53ehGR9TrqtzwBkCcx1PZQZ2', '2025-08-07', 5, 1, '2025-08-07 10:39:04', 1),
-(32, 'B', 'A', 'a.b@example.com', '$2y$12$Iz8JqmKHPJ8jfkEkZj3ImejZemYlZgU2TQEgQAoEFn48X00T.pmdO', '2025-08-07', 5, 0, NULL, 1),
-(33, 'Anonyme', 'Anonyme', 'user+33@anonymise.local', '$2y$10$dcJd2kNmOBDKmVh.CiUXKe95jcbF0DhalCNgCCntHcpZ7ZyD8ATHm', '2025-08-07', 5, 0, NULL, 0),
-(34, 'Test', 'Client', 'test@client.fr', '$2y$10$sQAfRqh4SqHMF.0bYxJAQO4Ip5W/DlP7lbc0GoBnwCLGpMnA8gY9W', '2025-08-08', 5, 1, '2025-08-08 12:40:01', 1);
+(31, 'Utilisateur 31', 'Anonyme', 'anon+31@example.invalid', '$2y$12$g.8hk6DmGlyAg3Lha21bdOshe2beV53ehGR9TrqtzwBkCcx1PZQZ2', '2025-08-07', 5, 0, NULL, 0),
+(34, 'Anonyme', 'Anonyme', 'user+34@anonymise.local', '$2y$10$sQAfRqh4SqHMF.0bYxJAQO4Ip5W/DlP7lbc0GoBnwCLGpMnA8gY9W', '2025-08-08', 5, 0, NULL, 0),
+(41, 'Utilisateur 41', 'Anonyme', 'anon+41@example.invalid', '$2y$12$YdQ0T8Rm6tuXQHgjlWHBFOTsNnqzKNYdpGPLTwGDIvA1JPIdLFfIe', '2025-08-11', 5, 0, NULL, 0),
+(42, 'client', 'Nouveau', 'client@client.fr', '$2y$10$OYK98GNMyQ1zz1WgQVjfNOSz/CBL86VNHVPeQU1.7d7P8HhQDSRD2', '2025-08-12', 5, 1, '2025-08-12 14:45:00', 1),
+(43, 'Livreur', 'Livreur', 'livreur@livreur.fr', '$2y$10$tGlZWsGr1B6CFqa1FpjiGexHRXATrWbIU9z8Ta0phqXzaylrRd/wy', '2025-08-12', 4, 0, NULL, 1);
 
 --
 -- Contraintes pour les tables déchargées
@@ -400,50 +451,49 @@ INSERT INTO `utilisateur` (`user_id`, `user_nom`, `user_prenom`, `user_mail`, `u
 -- Contraintes pour la table `commande`
 --
 ALTER TABLE `commande`
-  ADD CONSTRAINT `fk_commande_boisson` FOREIGN KEY (`boisson_id`) REFERENCES `boisson` (`boisson_id`),
-  ADD CONSTRAINT `fk_commande_livreur` FOREIGN KEY (`livreur_id`) REFERENCES `utilisateur` (`user_id`),
-  ADD CONSTRAINT `fk_commande_user` FOREIGN KEY (`user_id`) REFERENCES `utilisateur` (`user_id`);
+  ADD CONSTRAINT `fk_commande__livreur_id__utilisateur_setnull_20250815` FOREIGN KEY (`livreur_id`) REFERENCES `utilisateur` (`user_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_commande__user_id__utilisateur_setnull_20250815` FOREIGN KEY (`user_id`) REFERENCES `utilisateur` (`user_id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- Contraintes pour la table `commande_boisson`
 --
 ALTER TABLE `commande_boisson`
-  ADD CONSTRAINT `commande_boisson_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `commande` (`order_id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `commande_boisson_ibfk_2` FOREIGN KEY (`boisson_id`) REFERENCES `boisson` (`boisson_id`);
+  ADD CONSTRAINT `fk_commande_boisson__boisson_id_restrict_20250815` FOREIGN KEY (`boisson_id`) REFERENCES `boisson` (`boisson_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_commande_boisson__order_id_cascade_20250815` FOREIGN KEY (`order_id`) REFERENCES `commande` (`order_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Contraintes pour la table `commande_menu`
 --
 ALTER TABLE `commande_menu`
-  ADD CONSTRAINT `fk_cm_menu` FOREIGN KEY (`menu_id`) REFERENCES `menu` (`menu_id`),
-  ADD CONSTRAINT `fk_cm_order` FOREIGN KEY (`order_id`) REFERENCES `commande` (`order_id`),
-  ADD CONSTRAINT `fk_menu_boisson` FOREIGN KEY (`menu_boisson_id`) REFERENCES `boisson` (`boisson_id`);
+  ADD CONSTRAINT `fk_commande_menu__menu_boisson_id_setnull_20250815` FOREIGN KEY (`menu_boisson_id`) REFERENCES `boisson` (`boisson_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_commande_menu__menu_id_restrict_20250815` FOREIGN KEY (`menu_id`) REFERENCES `menu` (`menu_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_commande_menu__order_id_cascade_20250815` FOREIGN KEY (`order_id`) REFERENCES `commande` (`order_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Contraintes pour la table `commande_produit`
 --
 ALTER TABLE `commande_produit`
-  ADD CONSTRAINT `fk_cp_order` FOREIGN KEY (`order_id`) REFERENCES `commande` (`order_id`),
-  ADD CONSTRAINT `fk_cp_product` FOREIGN KEY (`product_id`) REFERENCES `produit` (`product_id`);
+  ADD CONSTRAINT `fk_commande_produit__order_id_cascade_20250815` FOREIGN KEY (`order_id`) REFERENCES `commande` (`order_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_commande_produit__product_id_restrict_20250815` FOREIGN KEY (`product_id`) REFERENCES `produit` (`product_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
 -- Contraintes pour la table `menu_produit`
 --
 ALTER TABLE `menu_produit`
-  ADD CONSTRAINT `fk_mp_menu` FOREIGN KEY (`menu_id`) REFERENCES `menu` (`menu_id`),
-  ADD CONSTRAINT `fk_mp_product` FOREIGN KEY (`product_id`) REFERENCES `produit` (`product_id`);
+  ADD CONSTRAINT `fk_menu_produit__menu_id_cascade_20250815` FOREIGN KEY (`menu_id`) REFERENCES `menu` (`menu_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_menu_produit__product_id_restrict_20250815` FOREIGN KEY (`product_id`) REFERENCES `produit` (`product_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
 -- Contraintes pour la table `produit`
 --
 ALTER TABLE `produit`
-  ADD CONSTRAINT `fk_category_id` FOREIGN KEY (`category_id`) REFERENCES `categorie` (`category_id`);
+  ADD CONSTRAINT `fk_produit__category_id__categorie_restrict_20250815` FOREIGN KEY (`category_id`) REFERENCES `categorie` (`category_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 --
 -- Contraintes pour la table `utilisateur`
 --
 ALTER TABLE `utilisateur`
-  ADD CONSTRAINT `fk_utilisateur_role` FOREIGN KEY (`role_id`) REFERENCES `role` (`role_id`);
+  ADD CONSTRAINT `fk_utilisateur__role_id__role_restrict_20250815` FOREIGN KEY (`role_id`) REFERENCES `role` (`role_id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -1,4 +1,5 @@
 <?php require __DIR__ . '/header.php'; ?>
+<?php $old = $_POST ?: $boisson; ?>
 
 <h1>Modifier une boisson</h1>
 <p><a href="index.php?section=boisson">← Retour à la liste</a></p>
@@ -6,7 +7,6 @@
 <form
     method="post"
     action="index.php?section=boisson&action=edit&id=<?= (int)$boisson['boisson_id'] ?>">
-    <!-- Token CSRF -->
     <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?>">
 
     <div>
@@ -15,7 +15,7 @@
             type="text"
             id="boisson_nom"
             name="boisson_nom"
-            value="<?= htmlspecialchars($boisson['boisson_nom'], ENT_QUOTES) ?>"
+            value="<?= htmlspecialchars($old['boisson_nom'] ?? '', ENT_QUOTES) ?>"
             required>
     </div>
 
@@ -26,7 +26,7 @@
             step="0.01"
             id="boisson_prix"
             name="boisson_prix"
-            value="<?= htmlspecialchars($boisson['boisson_prix'], ENT_QUOTES) ?>"
+            value="<?= htmlspecialchars($old['boisson_prix'] ?? '', ENT_QUOTES) ?>"
             required>
     </div>
 
@@ -36,7 +36,7 @@
                 type="checkbox"
                 name="boisson_disponibilite"
                 value="1"
-                <?= $boisson['boisson_disponibilite'] ? 'checked' : '' ?>>
+                <?= !empty($old['boisson_disponibilite']) ? 'checked' : '' ?>>
             Disponible
         </label>
     </div>
@@ -48,17 +48,16 @@
             name="boisson_description"
             rows="4"
             cols="50"
-            required><?= htmlspecialchars($boisson['boisson_description'] ?? '', ENT_QUOTES) ?></textarea>
+            required><?= htmlspecialchars($old['boisson_description'] ?? '', ENT_QUOTES) ?></textarea>
     </div>
 
     <div style="margin-top:1em;">
-        <label for="boisson_image_url">URL de l’image :</label><br>
+        <label for="boisson_image_url">URL de l'image :</label><br>
         <input
             type="text"
             id="boisson_image_url"
             name="boisson_image_url"
-            value="<?= htmlspecialchars($boisson['boisson_image_url'] ?? '', ENT_QUOTES) ?>"
-            required>
+            value="<?= htmlspecialchars($old['boisson_image_url'] ?? '', ENT_QUOTES) ?>">
     </div>
 
     <p style="margin-top:1em;">

@@ -48,13 +48,12 @@
     </div>
 
     <div style="margin-top:1em;">
-        <label for="boisson_image_url">URL de l’image :</label><br>
+        <label for="boisson_image_url">URL de l'image :</label><br>
         <input
             type="text"
             id="boisson_image_url"
             name="boisson_image_url"
-            placeholder="https://example.com/image.jpg"
-            required>
+            value="<?= htmlspecialchars($_POST['boisson_image_url'] ?? '', ENT_QUOTES) ?>">
     </div>
 
     <p style="margin-top:1em;">
