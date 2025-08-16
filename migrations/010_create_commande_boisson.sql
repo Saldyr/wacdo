@@ -5,7 +5,7 @@ CREATE TABLE
         `commande_boisson_id` INT NOT NULL AUTO_INCREMENT,
         `order_id` INT NOT NULL,
         `boisson_id` INT NOT NULL,
-        `quantity` INT NOT NULL DEFAULT '1',
+        `order_boisson_quantite` INT NOT NULL DEFAULT '1',
         PRIMARY KEY (`commande_boisson_id`),
         KEY `fk_cb_order` (`order_id`),
         KEY `fk_cb_boisson` (`boisson_id`),
