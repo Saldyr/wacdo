@@ -543,40 +543,59 @@ if ($method === 'POST' && $action === 'markReady') {
 // I) BACK-OFFICE: LISTE DES COMMANDES PAR RÔLE
 // -----------------------------------------------------------------------------
 $all = $cmdM->getAll();
-if ($role === 2)      $commandes = array_filter($all, fn($c) => $c['order_statut_commande'] === 'en_preparation');
-elseif ($role === 3)  $commandes = array_filter(
-    $all,
-    fn($c) => in_array(
-        $c['order_statut_commande'],
-        ['en_preparation', 'pret'],
-        true
-    )
-);
 
-elseif ($role === 4) {
-    $uid = $_SESSION['user']['user_id'];
+if ($role === 2) {
+    // Préparateur : uniquement "en_preparation"
+    $commandes = array_filter($all, fn($c) => $c['order_statut_commande'] === 'en_preparation');
+} elseif ($role === 3) {
+    // Accueil : en_preparation + pret
+    $commandes = array_filter($all, fn($c) => in_array($c['order_statut_commande'], ['en_preparation', 'pret'], true));
+} elseif ($role === 4) {
+    // Livreur : uniquement celles qui lui sont assignées et en_livraison
+    $uid = (int)$_SESSION['user']['user_id'];
     $commandes = array_filter($all, function ($c) use ($uid) {
         return $c['order_statut_commande'] === 'en_livraison'
-            && $c['livreur_id'] === $uid;
+            && (int)$c['livreur_id'] === $uid;
     });
-} else $commandes = array_filter($all, fn($c) => !in_array($c['order_statut_commande'], ['servie', 'livree'], true));
+} else {
+    // Admin/Manager : tout sauf servie/livree
+    $commandes = array_filter($all, fn($c) => !in_array($c['order_statut_commande'], ['servie', 'livree'], true));
+}
 
-$menusParCommande = [];
-$produitsParCommande = [];
-$boissonsUniteParCommande = [];
-$boissonMap = [];
-$boissonsParCommande = [];
-foreach ($bM->getAll() as $b) $boissonMap[$b['boisson_id']] = $b;
+// Préparation des données pour la vue
+$menusParCommande            = [];
+$produitsParCommande         = [];
+$boissonsUniteParCommande    = [];
+$boissonMap                  = [];
+
+// Map id->boisson (pour libeller rapidement)
+foreach ($bM->getAll() as $b) {
+    $boissonMap[$b['boisson_id']] = $b;
+}
+
 foreach ($commandes as $c) {
-    $oid = $c['order_id'];
+    $oid = (int)$c['order_id'];
+
+    // Menus de la commande + nom du menu
     $mrows = $cmM->getMenusByCommande($oid);
-    foreach ($mrows as &$r) $r['menu_nom'] = $mM->get($r['menu_id'])['menu_nom'];
+    foreach ($mrows as &$r) {
+        $menu = $mM->get((int)$r['menu_id']);
+        $r['menu_nom'] = $menu['menu_nom'] ?? '';
+    }
+    unset($r);
     $menusParCommande[$oid] = $mrows;
+
+    // Produits de la commande + nom du produit
     $prows = $cpM->getProduitsByCommande($oid);
-    foreach ($prows as &$r) $r['product_nom'] = $pM->get($r['product_id'])['product_nom'];
+    foreach ($prows as &$r) {
+        $prod = $pM->get((int)$r['product_id']);
+        $r['product_nom'] = $prod['product_nom'] ?? '';
+    }
+    unset($r);
     $produitsParCommande[$oid] = $prows;
+
+    // Boissons à l'unité (table commande_boisson)
     $boissonsUniteParCommande[$oid] = $cbM->getBoissonsByCommande($oid);
-    $boissonsParCommande[$oid] = $c['boisson_id'] ? $bM->get($c['boisson_id']) : null;
 }
 
 // -----------------------------------------------------------------------------

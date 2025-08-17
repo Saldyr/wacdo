@@ -8,7 +8,7 @@ class CommandeBoisson extends Model
         if ($quantite < 1) $quantite = 1; 
         $sql = "
             INSERT INTO commande_boisson
-            (order_id, boisson_id, quantity)
+            (order_id, boisson_id, order_boisson_quantite)
             VALUES (?, ?, ?)
         ";
         $stmt = $this->db->prepare($sql);
@@ -29,7 +29,7 @@ class CommandeBoisson extends Model
             commande_boisson_id,
             order_id,
             boisson_id,
-            quantity       AS order_boisson_quantite
+            order_boisson_quantite
             FROM commande_boisson
             WHERE order_id = ?
         ";
