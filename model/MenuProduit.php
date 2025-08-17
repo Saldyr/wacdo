@@ -4,11 +4,8 @@ require_once 'Model.php';
 class MenuProduit extends Model
 {
     /**
-     * Récupère la liste des product_id liés à un menu
-     *
-     * @param int $menu_id
-     * @return int[] Tableau d'IDs de produits
-     */
+    * Récupère la liste des product_id liés à un menu
+    */
     public function getProduitsByMenu(int $menu_id): array
     {
         $sql  = "SELECT product_id 
@@ -20,11 +17,8 @@ class MenuProduit extends Model
     }
 
     /**
-     * Supprime toutes les liaisons d'un men
-     *
-     * @param int $menu_id
-     * @return bool
-     */
+    * Supprime toutes les liaisons d'un menu
+    */
     public function deleteByMenu(int $menu_id): bool
     {
         $sql  = "DELETE FROM menu_produit WHERE menu_id = ?";
@@ -33,12 +27,8 @@ class MenuProduit extends Model
     }
 
     /**
-     * Ajoute une liaison menu ↔ produit
-     *
-     * @param int $menu_id
-     * @param int $product_id
-     * @return bool
-     */
+    * Ajoute une liaison menu ↔ produit
+    */
     public function add(int $menu_id, int $product_id): bool
     {
         $sql  = "INSERT INTO menu_produit (menu_id, product_id) VALUES (?, ?)";
@@ -46,14 +36,6 @@ class MenuProduit extends Model
         return $stmt->execute([$menu_id, $product_id]);
     }
 
-    /**
-     * Met à jour les produits d'un menu :
-     * supprime les anciennes liaisons et recrée celles cochées.
-     *
-     * @param int   $menu_id        L'ID du menu à mettre à jour
-     * @param array $produitsAssoc  Tableau [product_id => checked]
-     * @return void
-     */
     public function updateProduitsForMenu(int $menu_id, array $produitsAssoc): void
     {
         // 1) Supprime toutes les liaisons existantes

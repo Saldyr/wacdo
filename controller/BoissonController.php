@@ -1,5 +1,4 @@
 <?php
-// controller/BoissonController.php
 
 require_once __DIR__ . '/../lib/Auth.php';
 Auth::check([1]); // admin uniquement
@@ -20,9 +19,8 @@ if ($action === 'add' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $dispo = isset($_POST['boisson_disponibilite']) ? 1 : 0;
     $desc  = trim($_POST['boisson_description'] ?? '');
     $img   = trim($_POST['boisson_image_url'] ?? '');
-    if ($img === '') { $img = null; } // image optionnelle
+    if ($img === '') { $img = null; }
 
-    // IMPORTANT : ordre conforme au modèle
     $boissonModel->add($nom, $prix, $dispo, $desc, $img);
 
     header('Location: index.php?section=boisson');
@@ -63,7 +61,6 @@ if ($action === 'edit' && isset($_GET['id'])) {
         $img   = trim($_POST['boisson_image_url'] ?? '');
         if ($img === '') { $img = null; }
 
-        // IMPORTANT : ordre conforme au modèle
         $boissonModel->update($id, $nom, $prix, $dispo, $desc, $img);
 
         header('Location: index.php?section=boisson');

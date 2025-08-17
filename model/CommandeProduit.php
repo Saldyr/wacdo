@@ -36,7 +36,7 @@ class CommandeProduit extends Model
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Supprime tous les produits liés à une commande (utile pour update global)
+    // Supprime tous les produits liés à une commande
     public function deleteAllByCommande($order_id)
     {
         $sql = "DELETE FROM commande_produit WHERE order_id = ?";

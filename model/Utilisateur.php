@@ -104,7 +104,6 @@ class Utilisateur extends Model
         // adresse unique, non réutilisable
         $anonEmail = 'anon+' . $id . '@example.invalid';
 
-        // Tes colonnes : user_prenom, user_nom, user_mail, consentement, date_consentement, is_active
         $sql = "UPDATE utilisateur
             SET user_prenom = 'Anonyme',
                 user_nom = CONCAT('Utilisateur ', user_id),

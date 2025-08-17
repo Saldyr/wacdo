@@ -1,5 +1,4 @@
 <?php
-// controller/UtilisateurController.php
 
 $section = $_GET['section'] ?? '';
 $action  = $_GET['action']  ?? '';
@@ -167,7 +166,6 @@ if (($_GET['action'] ?? null) === 'delete' && $_SERVER['REQUEST_METHOD'] === 'PO
     }
     $id = (int) ($_POST['id'] ?? 0);
 
-    // (optionnel) éviter d’anonymiser un admin
     $user = $uModel->get($id);
     if (!$user) {
         header('Location: index.php?section=utilisateur&error=notfound');
@@ -178,7 +176,7 @@ if (($_GET['action'] ?? null) === 'delete' && $_SERVER['REQUEST_METHOD'] === 'PO
         exit;
     }
 
-    // Anonymisation + désactivation (plus de FK 1451)
+    // Anonymisation + désactivation
     $uModel->anonymize($id);
     header('Location: index.php?section=utilisateur&info=anonymized');
     exit;

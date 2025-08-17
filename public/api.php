@@ -19,7 +19,7 @@ header('Content-Type: application/json; charset=utf-8');
 
 $method   = $_SERVER['REQUEST_METHOD'];
 $resource = $_GET['r'] ?? '';
-$action   = $_GET['action'] ?? '';     // “prepared” ou “delivered”
+$action   = $_GET['action'] ?? '';
 $id       = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 try {
@@ -114,7 +114,6 @@ try {
                 $menuId = $r['menu_id'];
                 $menu   = $mM->get($menuId);
 
-                // On enrichit le menu avec ses produits
                 $produitsMenu = $mM->getProduitsByMenu($menuId);
                 $menu['produits'] = array_map(fn($pm) => [
                     'product' => [
@@ -190,7 +189,7 @@ try {
             echo json_encode(['success' => true, 'id' => $orderId]);
             break;
 
-        // 6) PUT commandes (roles 2, then 2|3)
+        // 6) PUT commandes (roles 2 et 3)
         case 'PUT commandes':
             if (! $id || ! in_array($action, ['prepared', 'delivered'], true)) {
                 http_response_code(400);

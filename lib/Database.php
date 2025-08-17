@@ -1,5 +1,4 @@
 <?php
-// lib/Database.php
 
 class Database
 {
@@ -16,7 +15,7 @@ class Database
             $cfg['database']
         );
 
-        // 3. On instancie PDO avec user/password de la config
+        // 3. Instanciation PDO avec user/password de la config
         $db = new PDO(
             $dsn,
             $cfg['username'],

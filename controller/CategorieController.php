@@ -1,5 +1,4 @@
 <?php
-// controller/CategorieController.php
 
 require_once __DIR__ . '/../lib/Auth.php';
 // Seul le rôle admin (1) peut gérer les catégories

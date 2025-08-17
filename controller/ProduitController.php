@@ -1,8 +1,7 @@
 <?php
-// controller/ProduitController.php
 
 require_once __DIR__ . '/../lib/Auth.php';
-// Seul l’admin (role_id = 1) peut gérer les produits
+// Seul l’admin (1) peut gérer les produits
 Auth::check([1]);
 
 require_once __DIR__ . '/../model/Produit.php';

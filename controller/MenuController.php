@@ -1,8 +1,7 @@
 <?php
-// controller/MenuController.php
 
 require_once __DIR__ . '/../lib/Auth.php';
-// Seul l’admin (role_id = 1) peut gérer les menus
+// Seul l’admin  (1) peut gérer les menus
 Auth::check([1]);
 
 require_once __DIR__ . '/../model/Menu.php';
@@ -29,13 +28,13 @@ if (($_GET['action'] ?? null) === 'add') {
         $prix        = (float) ($_POST['menu_prix']     ?? 0);
         $imageUrl    = trim($_POST['menu_image_url']   ?? '');
         $dispo       = isset($_POST['menu_disponibilite']) ? 1 : 0;
-        $produitsSel = $_POST['produits'] ?? []; // ex. ['3'=>1,'5'=>2]
+        $produitsSel = $_POST['produits'] ?? [];
 
         // Insère le menu et récupère son ID
         $menuModel->add($nom, $description, $prix, $imageUrl, $dispo);
         $newId = $menuModel->getLastInsertId();
 
-        // Associe les produits cochés (table pivot)
+        // Associe les produits cochés
         $menuProduitModel->updateProduitsForMenu($newId, $produitsSel);
 
         header('Location: index.php?section=menu');
@@ -116,7 +115,6 @@ $menus           = $menuModel->getAll();
 $produitsParMenu = [];
 
 foreach ($menus as $m) {
-    // getProduitsByMenu retourne un tableau d’IDs (int)
     $productIds = $menuProduitModel->getProduitsByMenu($m['menu_id']);
     $list       = [];
     foreach ($productIds as $pid) {
@@ -128,5 +126,4 @@ foreach ($menus as $m) {
     $produitsParMenu[$m['menu_id']] = $list;
 }
 
-// Charge la vue de liste
 require __DIR__ . '/../view/menu_list.php';

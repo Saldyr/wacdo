@@ -4,7 +4,7 @@ class Auth
 {
     public static function check(array $allowedRoles): void
     {
-        // Démarre la session si besoin
+        // Démarre la session
         if (session_status() !== PHP_SESSION_ACTIVE) {
             session_start();
         }
@@ -15,7 +15,7 @@ class Auth
             exit;
         }
 
-        // 2) Son rôle doit être dans la liste des rôles autorisés
+        // 2) Le rôle doit être dans la liste des rôles autorisés
         $roleId = $_SESSION['user']['role_id'];
         if (!in_array($roleId, $allowedRoles, true)) {
             http_response_code(403);

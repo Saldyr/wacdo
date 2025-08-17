@@ -34,7 +34,6 @@
                 <td><?= htmlspecialchars($u['user_mail'],  ENT_QUOTES) ?></td>
                 <td>
                     <?php
-                    // On mappe tous les rôles connus
                     switch ((int)$u['role_id']) {
                         case 1:
                             echo 'Administrateur';

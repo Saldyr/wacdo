@@ -50,16 +50,14 @@
         <label for="order_statut_commande">Statut :</label><br>
         <select id="order_statut_commande" name="order_statut_commande" required>
             <?php foreach ($STATUT_LABELS as $code => $libelle):
-                // on veut toujours pouvoir revenir en préparation
                 $allowed = match ($code) {
-                    'en_preparation'          => true,                             // TOUJOURS proposé
+                    'en_preparation'          => true,
                     'pret'                    => in_array($commande['order_type'], ['sur_place', 'a_emporter', 'livraison'], true),
                     'servie'                  => in_array($commande['order_type'], ['sur_place', 'a_emporter'], true),
                     'en_livraison', 'livree'  => $commande['order_type'] === 'livraison',
                     default                   => false,
                 };
                 if (!$allowed) continue;
-                // on définit data-type pour le JS de filtrage
                 $dataType = in_array($code, ['en_preparation', 'pret', 'servie'], true)
                     ? 'sur_place_a_emporter'
                     : 'livraison';
@@ -189,14 +187,12 @@
             const wantedGroup = (t === 'livraison') ? 'livraison' : 'sur_place_a_emporter';
 
             [...statusSelect.options].forEach(opt => {
-                // on affiche toujours "en_preparation", et sinon on vérifie le groupe
                 if (opt.value === 'en_preparation') {
                     opt.hidden = false;
                 } else {
                     opt.hidden = opt.dataset.type !== wantedGroup;
                 }
             });
-            // coche la première visible
             for (const opt of statusSelect.options) {
                 if (!opt.hidden) {
                     opt.selected = true;

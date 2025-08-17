@@ -23,7 +23,7 @@ class Menu extends Model
         $sql = "DELETE FROM menu_produit WHERE menu_id = ?";
         $this->db->prepare($sql)->execute([$id]);
 
-        // 2) (Si tu utilises aussi commande_menu) Supprimer les liens commande → menu
+        // 2) Supprimer les liens commande → menu
         $sql = "DELETE FROM commande_menu WHERE menu_id = ?";
         $this->db->prepare($sql)->execute([$id]);
 

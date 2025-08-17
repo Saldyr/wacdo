@@ -49,8 +49,8 @@ $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 // D) UTILITAIRES
 // -----------------------------------------------------------------------------
 /**
- * D-1: Renvoie le panier en JSON pour requêtes AJAX
- */
+*  D-1: Renvoie le panier en JSON pour requêtes AJAX
+*/
 function sendCartJson(array $models)
 {
     $detail = ['items' => [], 'total' => 0];
@@ -452,7 +452,7 @@ if ($method === 'POST' && $action === 'edit') {
             }
         }
 
-        // 2) Insérer enfin les menus "nus" pour atteindre la quantité demandée
+        // 2) Insérer enfin les menus pour atteindre la quantité demandée
         $remaining = $q - $totalFree;
         for ($i = 0; $i < $remaining; $i++) {
             $cmM->add($oid, $m, 1, null);
@@ -528,8 +528,6 @@ if ($method === 'POST' && $action === 'markReady') {
             && ctype_digit((string)$_POST['livreur_id'])
         ) {
             $cmdM->assignToLivreur($oid, (int)$_POST['livreur_id']);
-            // Si assignToLivreur ne change pas le statut, décommente :
-            // $cmdM->updateStatus($oid, 'en_livraison');
         } else {
             $cmdM->updateStatus($oid, $nx);
         }
@@ -568,7 +566,7 @@ $produitsParCommande         = [];
 $boissonsUniteParCommande    = [];
 $boissonMap                  = [];
 
-// Map id->boisson (pour libeller rapidement)
+// Map id->boisson
 foreach ($bM->getAll() as $b) {
     $boissonMap[$b['boisson_id']] = $b;
 }
@@ -601,7 +599,7 @@ foreach ($commandes as $c) {
 // -----------------------------------------------------------------------------
 // J) ASSIGNATION LIVREUR
 // -----------------------------------------------------------------------------
-if ($role === 3) { // Accueil/Prépa
+if ($role === 3) {
     $uM = new Utilisateur();
     $livreurs = $uM->getLivreursActifs();
 }

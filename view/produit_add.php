@@ -56,7 +56,7 @@ $csrf = htmlspecialchars($_SESSION['csrf'] ?? '', ENT_QUOTES);
                 type="checkbox"
                 name="product_disponibilite"
                 value="1"
-                <?= isset($old['product_disponibilite']) ? 'checked' : 'checked' // coché par défaut ?>>
+                <?= isset($old['product_disponibilite']) ? 'checked' : 'checked'?>>
             Disponible
         </label>
     </div>

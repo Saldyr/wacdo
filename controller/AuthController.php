@@ -1,5 +1,4 @@
 <?php
-// controller/AuthController.php
 
 require_once __DIR__ . '/../model/Utilisateur.php';
 $uModel = new Utilisateur();
@@ -21,7 +20,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = $uModel->findByEmail($email);
 
     if ($user && password_verify($pass, $user['user_password'])) {
-        // Stocke les infos en session (session_start fait déjà index.php)
         $_SESSION['user'] = [
             'user_id' => $user['user_id'],
             'role_id' => $user['role_id'],
@@ -37,5 +35,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-//-- Affiche le formulaire de connexion
 require __DIR__ . '/../view/login.php';

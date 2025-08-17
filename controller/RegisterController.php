@@ -40,5 +40,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// si on arrive en GET ou en erreur, on retombe sur la vue login/inscription
 require __DIR__ . '/../view/login.php';

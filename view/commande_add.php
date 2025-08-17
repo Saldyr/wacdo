@@ -43,7 +43,6 @@
         <label for="order_statut_commande">Statut :</label><br>
         <select id="order_statut_commande" name="order_statut_commande" required>
             <?php foreach ($STATUT_LABELS as $code => $libelle):
-                // quels statuts proposer en création ?
                 $allowed = match ($code) {
                     'en_preparation', 'pret' => true,
                     'en_livraison'           => ($_POST['order_type'] ?? 'sur_place') === 'livraison',
@@ -173,10 +172,8 @@
             const type = document.querySelector('input[name="order_type"]:checked').value;
             const wanted = (type === 'livraison') ? 'livraison' : 'all';
             [...statusSelect.options].forEach(opt => {
-                // on affiche toujours les data-type="all"
                 opt.hidden = (opt.dataset.type !== 'all' && opt.dataset.type !== wanted);
             });
-            // coche la première visible
             for (const o of statusSelect.options) {
                 if (!o.hidden) {
                     o.selected = true;
@@ -184,7 +181,6 @@
                 }
             }
         }
-
         radios.forEach(r => r.addEventListener('change', filterOptions));
         window.addEventListener('DOMContentLoaded', filterOptions);
     })();
